@@ -2,9 +2,14 @@
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.lulu.tuyou.activity.LoginActivity">
+    tools:context="com.lulu.tuyou.view.LoginActivity">
     <data>
-
+        <variable
+            name="user"
+            type="com.lulu.tuyou.model.TuYouUser"/>
+        <variable
+            name="eventHandler"
+            type="com.lulu.tuyou.view.EventLogin"/>
     </data>
     <android.support.v4.widget.NestedScrollView
         android:orientation="vertical"
@@ -13,6 +18,9 @@
         android:layout_height="match_parent">
         <LinearLayout
             android:orientation="vertical"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <android.support.design.widget.TextInputLayout
@@ -22,7 +30,8 @@
                     android:inputType="textAutoComplete"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:hint="用户名"
+                    android:hint="请输入用户名"
+                    android:text="@={user.username}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </android.support.design.widget.TextInputLayout>
@@ -34,13 +43,19 @@
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:hint="密码"
+                    android:hint="请输入密码"
+                    android:text="@={user.password}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </android.support.design.widget.TextInputLayout>
 
-
+            <Button
+                android:text="登 录"
+                android:onClick="@{ eventHandler.loginClick }"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
+
     </android.support.v4.widget.NestedScrollView>
 
 </layout>
