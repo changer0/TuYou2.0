@@ -9,7 +9,7 @@
             type="com.lulu.tuyou.model.TuYouUser"/>
         <variable
             name="eventHandler"
-            type="com.lulu.tuyou.view.EventLogin"/>
+            type="com.lulu.tuyou.view.event_handler.EventLogin"/>
     </data>
     <android.support.v4.widget.NestedScrollView
         android:orientation="vertical"

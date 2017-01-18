@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.lulu.tuyou.view.TuYouActivity">
+    <data>
+        <variable
+            name="eventTuyou"
+            type="com.lulu.tuyou.view.event_handler.EventTuYou"/>
+    </data>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!--<android.support.design.widget.AppBarLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="?actionBarSize"-->
+            <!--app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">-->
+
+            <!--<android.support.v7.widget.Toolbar-->
+                <!--android:id="@+id/tuyou_toolbar"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"/>-->
+        <!--</android.support.design.widget.AppBarLayout>-->
+
+        <android.support.v4.widget.DrawerLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <FrameLayout
+                    android:id="@+id/tuyou_container"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"/>
+                <RadioGroup
+                    android:id="@+id/main_rg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#fff"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:onClick="@{eventTuyou.clickBottomNavigation}"
+                        android:id="@+id/main_rb_msg"
+                        style="@style/RadioGroupStyle"
+                        android:drawableTop="@mipmap/ic_chat"
+                        android:text="@string/bottom_navgation_msg"
+                        />
+
+                    <RadioButton
+                        android:onClick="@{eventTuyou.clickBottomNavigation}"
+                        android:id="@+id/main_rb_map"
+                        style="@style/RadioGroupStyle"
+                        android:drawableTop="@mipmap/ic_map"
+                        android:text="@string/bottom_navgation_map"/>
+
+                    <RadioButton
+                        android:onClick="@{eventTuyou.clickBottomNavigation}"
+                        android:id="@+id/main_rb_circle"
+                        style="@style/RadioGroupStyle"
+                        android:drawableTop="@mipmap/ic_circle"
+                        android:text="@string/bottom_navgation_circle"/>
+                </RadioGroup>
+            </LinearLayout>
+
+            <android.support.design.widget.NavigationView
+                android:id="@+id/navigation"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:background="@color/colorApp1"
+                />
+
+        </android.support.v4.widget.DrawerLayout>
+
+
+    </LinearLayout>
+</layout>

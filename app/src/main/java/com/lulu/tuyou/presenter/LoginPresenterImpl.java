@@ -1,10 +1,6 @@
 package com.lulu.tuyou.presenter;
 
-import android.app.Activity;
-
-import com.lulu.tuyou.model.TuYouUser;
 import com.lulu.tuyou.view.ILoginView;
-import com.lulu.tuyou.view.LoginActivity;
 
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;

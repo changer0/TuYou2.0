@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
 
 import com.lulu.tuyou.MainActivity;
@@ -13,8 +12,9 @@ import com.lulu.tuyou.databinding.ActivityLoginBinding;
 import com.lulu.tuyou.model.TuYouUser;
 import com.lulu.tuyou.presenter.ILoginPresenter;
 import com.lulu.tuyou.presenter.LoginPresenterImpl;
+import com.lulu.tuyou.view.event_handler.EventLogin;
 
-public class LoginActivity  extends AppCompatActivity implements ILoginView{
+public class LoginActivity  extends AppCompatActivity implements ILoginView {
 
     ILoginPresenter mLoginPresenter;
     ActivityLoginBinding mBinding;

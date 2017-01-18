@@ -1,5 +1,8 @@
 apply plugin: 'com.android.application'
 
+//用于方便调试性能问题的打印插件。给访法加上@DebugLog，就能输出该方法的调用参数，以及执行时间
+apply plugin: 'com.jakewharton.hugo'
+
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.1"
@@ -38,6 +41,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:25.1.0'
-    testCompile 'junit:junit:4.12'
     compile 'com.android.support:design:25.1.0'
+    compile 'com.android.support:support-v4:25.1.0'
+    testCompile 'junit:junit:4.12'
 }

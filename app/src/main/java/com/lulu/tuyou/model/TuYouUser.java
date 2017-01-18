@@ -5,7 +5,6 @@ import android.util.Base64;
 import android.view.View;
 import android.widget.Toast;
 
-import com.lulu.tuyou.presenter.ILoginPresenter;
 import com.lulu.tuyou.utils.TuYouCryptUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -137,7 +136,6 @@ public class TuYouUser extends BmobUser implements Comparable<TuYouUser> {
         if (TextUtils.isEmpty(icon)) {
             return "http://q.qlogo.cn/qqapp/100371282/D4280B8B06B1D1C9221284CC80DD2443/40";
         }
-
         return icon;
     }
 
