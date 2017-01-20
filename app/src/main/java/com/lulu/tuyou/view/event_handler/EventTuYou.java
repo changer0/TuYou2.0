@@ -3,7 +3,9 @@ package com.lulu.tuyou.view.event_handler;
 import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.lulu.tuyou.R;
 import com.lulu.tuyou.presenter.ITuYouPresenter;
@@ -43,4 +45,7 @@ public class EventTuYou {
                 break;
         }
     }
+
+
+
 }

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">图友</string>
+
+
     <string name="bottom_navgation_msg">消息</string>
     <string name="bottom_navgation_map">地图</string>
     <string name="bottom_navgation_circle">图友圈</string>

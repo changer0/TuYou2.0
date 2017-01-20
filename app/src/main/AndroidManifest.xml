@@ -14,6 +14,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <!-- 允许读取手机状态 用于创建BmobInstallation -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <!--允许程序访问CellID或WiFi热点来获取粗略的位置-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
 
     <application
         android:name=".TuYouApp"
@@ -23,18 +26,23 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
-
         </activity>
         <activity android:name=".view.LoginActivity">
 
         </activity>
-        <activity android:name=".view.TuYouActivity">
+        <activity android:name=".view.TuYouActivity" android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <!--高德地图服务-->
+        <service android:name="com.amap.api.location.APSService"/>
+        <!--高德地图的APPkey-->
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="6fb613e94da3a60314b239017ebcd480"/>
     </application>
 
 </manifest>

@@ -1,12 +1,15 @@
 package com.lulu.tuyou.presenter;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.lulu.tuyou.R;
+import com.lulu.tuyou.common.Constant;
 import com.lulu.tuyou.view.CircleFragment;
 import com.lulu.tuyou.view.ITuYouView;
 import com.lulu.tuyou.view.MapFragment;
@@ -65,7 +68,7 @@ public class TuYouPresenterImpl implements ITuYouPresenter {
         }
 
         addOrShowFragment(mMessageFragment, mManager.beginTransaction());
-        Log.d("lulu", "TuYouPresenterImpl-clickMessageFragment  ");
+        Log.d("lulu", "TuYouPresenterImpl-clickMessageFragment  name： " + currentFragment.getClass().getName());
     }
 
     @Override
@@ -82,5 +85,15 @@ public class TuYouPresenterImpl implements ITuYouPresenter {
             mCircleFragment = CircleFragment.newInstance();
         }
         addOrShowFragment(mCircleFragment, mManager.beginTransaction());
+    }
+
+    @Override
+    public void saveInstanceState(Bundle state) {
+        Log.d("lulu", "TuYouPresenterImpl-saveInstanceState  ");
+    }
+
+    @Override
+    public void restoreInstanceState(Bundle state) {
+        Log.d("lulu", "TuYouPresenterImpl-restoreInstanceState  ");
     }
 }

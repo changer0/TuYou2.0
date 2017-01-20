@@ -2,9 +2,11 @@ package com.lulu.tuyou.view;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.os.PersistableBundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.RadioButton;
 
 import com.lulu.tuyou.BR;
@@ -24,6 +26,7 @@ public class TuYouActivity extends AppCompatActivity implements ITuYouView {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("lulu", "TuYouActivity-onCreate  执行");
         mPresenter = new TuYouPresenterImpl(this);
         //设置沉浸式状态栏
         //Utils.setTranslucentStatusBar(this, true);
@@ -32,11 +35,28 @@ public class TuYouActivity extends AppCompatActivity implements ITuYouView {
         //init DataBinding
         EventTuYou eventTuyou = new EventTuYou(mPresenter, this);
         binding.setEventTuyou(eventTuyou);
-        //进入时手动点击 消息 的Fragment(暂时没有什么好的办法来解决这个问题)
-        RadioButton rbMsg = binding.mainRbMsg;
-        rbMsg.setChecked(true);
-        eventTuyou.clickBottomNavigation(rbMsg);
 
+        //进入时手动点击 消息 的Fragment(暂时没有什么好的办法来解决这个问题)
+        if (savedInstanceState == null) {
+            RadioButton rbMsg = binding.mainRbMsg;
+            rbMsg.setChecked(true);
+            eventTuyou.clickBottomNavigation(rbMsg);
+        }
+
+
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mPresenter.saveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mPresenter.restoreInstanceState(savedInstanceState);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -46,6 +66,7 @@ public class TuYouActivity extends AppCompatActivity implements ITuYouView {
     public FragmentManager onGetFragmentManger() {
         return getSupportFragmentManager();
     }
+
     @Override
     public Context onGetContext() {
         return this;

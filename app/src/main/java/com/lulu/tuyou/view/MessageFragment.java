@@ -31,24 +31,24 @@ public class MessageFragment extends Fragment {
 
     public MessageFragment() {
         // Required empty public constructor
-        Log.d("lulu", "MessageFragment-MessageFragment  ");
+        //Log.d("lulu", "MessageFragment-MessageFragment  ");
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.d("lulu", "MessageFragment-onAttach  ");
+        //Log.d("lulu", "MessageFragment-onAttach  ");
     }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("lulu", "MessageFragment-onCreate  ");
+        //Log.d("lulu", "MessageFragment-onCreate  ");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d("lulu", "MessageFragment-onCreateView  ");
+        //Log.d("lulu", "MessageFragment-onCreateView  ");
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_message, container, false);
     }
@@ -56,48 +56,48 @@ public class MessageFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d("lulu", "MessageFragment-onActivityCreated  ");
+        //Log.d("lulu", "MessageFragment-onActivityCreated  ");
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Log.d("lulu", "MessageFragment-onStart  ");
+        //Log.d("lulu", "MessageFragment-onStart  ");
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("lulu", "MessageFragment-onResume  ");
+        //Log.d("lulu", "MessageFragment-onResume  ");
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.d("lulu", "MessageFragment-onPause  ");
+        //Log.d("lulu", "MessageFragment-onPause  ");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.d("lulu", "MessageFragment-onStop  ");
+        //Log.d("lulu", "MessageFragment-onStop  ");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d("lulu", "MessageFragment-onDestroyView  ");
+        //Log.d("lulu", "MessageFragment-onDestroyView  ");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("lulu", "MessageFragment-onDestroy  ");
+        //Log.d("lulu", "MessageFragment-onDestroy  ");
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        Log.d("lulu", "MessageFragment-onDetach  ");
+        //Log.d("lulu", "MessageFragment-onDetach  ");
     }
 }

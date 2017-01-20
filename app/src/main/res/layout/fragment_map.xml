@@ -1,15 +1,60 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="com.lulu.tuyou.view.MapFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:gravity="center"
-        android:textSize="30sp"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.lulu.tuyou.view.MapFragment">
+    <data>
+        <variable
+            name="event"
+            type="com.lulu.tuyou.view.event_handler.EventMap"/>
+    </data>
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="地图"/>
+        android:layout_height="match_parent">
+        <ImageView
+            android:onClick="@{event.clickBottomUpArrows}"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/map_ic_up"
+            android:background="#ffffffff"
+            android:src="@mipmap/ic_arrow_up"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/map_up_img_height"/>
 
-</FrameLayout>
+        <!--底层放地图-->
+        <com.amap.api.maps2d.MapView
+            android:layout_above="@id/map_ic_up"
+            android:id="@+id/map_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <!--overScrollMode:去除ScrollView下拉阴影效果-->
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/map_scroll_view"
+            android:overScrollMode="never"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <View
+                    android:onTouch="@{event.touchEmptyView}"
+                    android:background="#00000000"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/map_empty_view_height"/>
+                <!--先gone掉，之后点击地图上点显示-->
+                <android.support.v7.widget.RecyclerView
+                    android:background="#ffffffff"
+                    android:nestedScrollingEnabled="false"
+                    android:id="@+id/map_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+    </RelativeLayout>
+
+
+</layout>
+
