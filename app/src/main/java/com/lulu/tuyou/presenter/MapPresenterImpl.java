@@ -64,13 +64,16 @@ public class MapPresenterImpl implements IMapPresenter, NestedScrollView.OnScrol
     private float currentZoom = 15; //当前的放大级别
     private NearbySearch mNearbySearch; //附近
     private static final int DURATION = 500;
+    private boolean isToast = false;
 
     public MapPresenterImpl(IMapView mapFragmentView, Context context) {
         mMapFragmentView = mapFragmentView;
         mContext = context;
     }
 
-    //在Presenter中初始化数据
+    ///////////////////////////////////////////////////////////////////////////
+    // 在Presenter中初始化数据
+    ///////////////////////////////////////////////////////////////////////////
     @Override
     public void initData() {
         mNestedScrollView = mMapFragmentView.onGetNestedScroll();
@@ -90,6 +93,9 @@ public class MapPresenterImpl implements IMapPresenter, NestedScrollView.OnScrol
         mOtherMakers = new ArrayList<>();
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // 用于再次点击Map页面时的数据刷新用
+    ///////////////////////////////////////////////////////////////////////////
     @Override
     public void refreshData(Fragment fragment) {
         if (fragment.isAdded()) {
@@ -100,7 +106,9 @@ public class MapPresenterImpl implements IMapPresenter, NestedScrollView.OnScrol
     private AMapLocationClientOption mLocationOption = null;
     private AMapLocationClient mLocationClient = null;
 
-    //开启定位
+    ///////////////////////////////////////////////////////////////////////////
+    // 定位开启
+    ///////////////////////////////////////////////////////////////////////////
     @Override
     public void startLocation() {
         //设置定位监听
@@ -109,7 +117,9 @@ public class MapPresenterImpl implements IMapPresenter, NestedScrollView.OnScrol
         mAMap.setMyLocationEnabled(true);
     }
 
-    //激活定位
+    ///////////////////////////////////////////////////////////////////////////
+    // 定位激活
+    ///////////////////////////////////////////////////////////////////////////
     @Override
     public void activate(OnLocationChangedListener listener) {
         if (mLocationClient == null) {
@@ -132,7 +142,9 @@ public class MapPresenterImpl implements IMapPresenter, NestedScrollView.OnScrol
         }
     }
 
-    //停止定位
+    ///////////////////////////////////////////////////////////////////////////
+    // 停止定位
+    ///////////////////////////////////////////////////////////////////////////
     @Override
     public void deactivate() {
         if (mLocationClient != null) {
@@ -142,7 +154,9 @@ public class MapPresenterImpl implements IMapPresenter, NestedScrollView.OnScrol
         mLocationClient = null;
     }
 
-    //定位回到监听
+    ///////////////////////////////////////////////////////////////////////////
+    // 定位回调监听
+    ///////////////////////////////////////////////////////////////////////////
     @Override
     public void onLocationChanged(AMapLocation location) {
         if (location != null) {
@@ -223,6 +237,11 @@ public class MapPresenterImpl implements IMapPresenter, NestedScrollView.OnScrol
                     String userID = info.getUserID();
                     //如果是用户自己则需要continue
                     if (userID.equals(Utils.getIMEI(mContext))) {
+                        //有时会将自己的位置显示出来
+                        if (list.size() == 1 && !isToast) {
+                            Toast.makeText(mContext, "附近暂无图友", Toast.LENGTH_SHORT).show();
+                            isToast = true;
+                        }
                         continue;
                     }
                     LatLonPoint point = info.getPoint();
@@ -237,6 +256,7 @@ public class MapPresenterImpl implements IMapPresenter, NestedScrollView.OnScrol
                 }
             } else {
                 Toast.makeText(mContext, "附近暂无图友！", Toast.LENGTH_SHORT).show();
+                isToast = true;
             }
         } else {
             Log.d("lulu", "MapPresenterImpl-onNearbyInfoSearched  出现异常异常码： " + resultCode);
@@ -245,7 +265,6 @@ public class MapPresenterImpl implements IMapPresenter, NestedScrollView.OnScrol
 
     @Override
     public void onNearbyInfoUploaded(int i) {
-
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -315,11 +334,16 @@ public class MapPresenterImpl implements IMapPresenter, NestedScrollView.OnScrol
         currentZoom = position.zoom;
     }
 
-    //从View回调过来，用于释放资源
+    ///////////////////////////////////////////////////////////////////////////
+    // 从View回调过来，用于释放资源
+    ///////////////////////////////////////////////////////////////////////////
     @Override
     public void onDestroy() {
         if (mLocationClient != null) {
             mLocationClient.onDestroy();
+        }
+        if (mNearbySearch != null) {
+            mNearbySearch.destroy();
         }
     }
 
