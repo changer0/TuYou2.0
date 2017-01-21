@@ -8,10 +8,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/bottom_navgation_msg"/>
+        <Button
+            android:id="@+id/msg_jump"
+            android:text="跳转"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
 
     </FrameLayout>

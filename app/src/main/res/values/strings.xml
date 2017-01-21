@@ -7,4 +7,7 @@
     <string name="bottom_navgation_msg">消息</string>
     <string name="bottom_navgation_map">地图</string>
     <string name="bottom_navgation_circle">图友圈</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 </resources>
