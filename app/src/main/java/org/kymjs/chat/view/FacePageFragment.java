@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kymjs.chat;
+package org.kymjs.chat.view;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -37,8 +37,9 @@ import android.widget.RadioGroup;
 
 import com.lulu.tuyou.R;
 
+import org.kymjs.chat.OnOperationListener;
 import org.kymjs.chat.adapter.FaceAdapter;
-import org.kymjs.chat.bean.Faceicon;
+import org.kymjs.chat.module.Faceicon;
 import org.kymjs.kjframe.ui.SupportFragment;
 import org.kymjs.kjframe.utils.StringUtils;
 

@@ -16,8 +16,8 @@
 package org.kymjs.chat;
 
 
-import org.kymjs.chat.bean.Emojicon;
-import org.kymjs.chat.bean.Faceicon;
+import org.kymjs.chat.module.Emojicon;
+import org.kymjs.chat.module.Faceicon;
 
 /**
  * 表情栏顶部按钮的监听器

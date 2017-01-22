@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kymjs.chat.bean;
+package org.kymjs.chat.module;
 
-import java.io.Serializable;
+import cn.bmob.v3.BmobObject;
 
 /**
  * 表情javabean
  * @author kymjs (http://www.kymjs.com/) on 6/9/15.
  */
-public class Faceicon implements Serializable {
+public class Faceicon extends BmobObject{
     private String name; //网络传输中的值
     private String path; //在系统中的绝对路径
     private String fileName; //图片文件名

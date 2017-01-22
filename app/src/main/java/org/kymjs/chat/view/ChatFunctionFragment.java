@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kymjs.chat;
+package org.kymjs.chat.view;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 
 import com.lulu.tuyou.R;
 
+import org.kymjs.chat.OnOperationListener;
 import org.kymjs.kjframe.ui.SupportFragment;
 
 /**

@@ -20,7 +20,7 @@ import android.widget.ImageView;
 
 import com.lulu.tuyou.R;
 
-import org.kymjs.chat.bean.Faceicon;
+import org.kymjs.chat.module.Faceicon;
 import org.kymjs.kjframe.KJBitmap;
 import org.kymjs.kjframe.widget.AdapterHolder;
 import org.kymjs.kjframe.widget.KJAdapter;

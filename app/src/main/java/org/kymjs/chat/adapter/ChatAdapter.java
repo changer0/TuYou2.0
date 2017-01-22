@@ -26,9 +26,9 @@ import android.widget.TextView;
 
 import com.lulu.tuyou.R;
 
-import org.kymjs.chat.ChatActivity.OnChatItemClickListener;
 import org.kymjs.chat.UrlUtils;
-import org.kymjs.chat.bean.Message;
+import org.kymjs.chat.module.Message;
+import org.kymjs.chat.presenter.ChatPresenterImpl;
 import org.kymjs.kjframe.KJBitmap;
 import org.kymjs.kjframe.utils.StringUtils;
 
@@ -43,9 +43,9 @@ public class ChatAdapter extends BaseAdapter {
     private final Context cxt;
     private List<Message> datas = null;
     private KJBitmap kjb;
-    private OnChatItemClickListener listener;
+    private ChatPresenterImpl.OnChatItemClickListener listener;
 
-    public ChatAdapter(Context cxt, List<Message> datas, OnChatItemClickListener listener) {
+    public ChatAdapter(Context cxt, List<Message> datas, ChatPresenterImpl.OnChatItemClickListener listener) {
         this.cxt = cxt;
         if (datas == null) {
             datas = new ArrayList<Message>(0);

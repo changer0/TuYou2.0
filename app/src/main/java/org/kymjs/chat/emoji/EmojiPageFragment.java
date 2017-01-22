@@ -34,7 +34,7 @@ import com.lulu.tuyou.R;
 
 import org.kymjs.chat.OnOperationListener;
 import org.kymjs.chat.adapter.EmojiAdapter;
-import org.kymjs.chat.bean.Emojicon;
+import org.kymjs.chat.module.Emojicon;
 import org.kymjs.kjframe.ui.SupportFragment;
 
 import java.util.List;

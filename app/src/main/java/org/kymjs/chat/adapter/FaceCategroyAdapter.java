@@ -24,8 +24,8 @@ import android.widget.ImageView;
 
 import com.lulu.tuyou.R;
 
-import org.kymjs.chat.ChatFunctionFragment;
-import org.kymjs.chat.FacePageFragment;
+import org.kymjs.chat.view.ChatFunctionFragment;
+import org.kymjs.chat.view.FacePageFragment;
 import org.kymjs.chat.OnOperationListener;
 import org.kymjs.chat.emoji.EmojiPageFragment;
 import org.kymjs.chat.widget.KJChatKeyboard;

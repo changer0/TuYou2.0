@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import com.lulu.tuyou.R;
 
-import org.kymjs.chat.bean.Emojicon;
+import org.kymjs.chat.module.Emojicon;
 import org.kymjs.kjframe.widget.AdapterHolder;
 import org.kymjs.kjframe.widget.KJAdapter;
 

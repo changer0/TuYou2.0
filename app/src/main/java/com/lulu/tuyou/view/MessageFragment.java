@@ -1,13 +1,10 @@
 package com.lulu.tuyou.view;
 
 
-import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +13,7 @@ import android.widget.Toast;
 import com.lulu.tuyou.R;
 import com.lulu.tuyou.databinding.FragmentMessageBinding;
 
-import org.kymjs.chat.ChatActivity;
+import org.kymjs.chat.view.ChatActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -51,6 +48,7 @@ public class MessageFragment extends Fragment {
                 getContext().startActivity(new Intent(getContext(), ChatActivity.class));
             }
         });
+
         return binding.getRoot();
     }
 }

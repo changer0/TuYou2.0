@@ -3,7 +3,7 @@ package org.kymjs.chat.emoji;
 import android.view.KeyEvent;
 import android.widget.EditText;
 
-import org.kymjs.chat.bean.Emojicon;
+import org.kymjs.chat.module.Emojicon;
 
 import java.util.ArrayList;
 import java.util.List;

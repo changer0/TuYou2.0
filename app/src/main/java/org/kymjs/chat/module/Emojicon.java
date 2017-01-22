@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kymjs.chat.bean;
+package org.kymjs.chat.module;
+
+import cn.bmob.v3.BmobObject;
 
 /**
  * emoji表情的javabean
  *
  * @author kymjs (http://www.kymjs.com/) on 6/8/15.
  */
-public class Emojicon {
+public class Emojicon extends BmobObject{
     private String name; //在网络传递中的值
     private byte[] code; //在系统中所代表的值
     private String value; //code转换为String的值

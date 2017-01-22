@@ -13,16 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kymjs.chat.bean;
+package org.kymjs.chat.module;
 
 import java.util.Date;
+
+import cn.bmob.v3.BmobObject;
 
 /**
  * 聊天消息javabean
  *
  * @author kymjs (http://www.kymjs.com/)
  */
-public class Message {
+public class Message extends BmobObject {
     public final static int MSG_TYPE_TEXT = 3;
     public final static int MSG_TYPE_PHOTO = 1;
     public final static int MSG_TYPE_FACE = 2;
