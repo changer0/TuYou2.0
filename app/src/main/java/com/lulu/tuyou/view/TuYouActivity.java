@@ -1,15 +1,16 @@
 package com.lulu.tuyou.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.os.PersistableBundle;
+import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.RadioButton;
 
-import com.lulu.tuyou.BR;
 import com.lulu.tuyou.R;
 import com.lulu.tuyou.databinding.ActivityTuYouBinding;
 import com.lulu.tuyou.presenter.ITuYouPresenter;
@@ -29,12 +30,14 @@ public class TuYouActivity extends AppCompatActivity implements ITuYouView {
         Log.d("lulu", "TuYouActivity-onCreate  执行");
         mPresenter = new TuYouPresenterImpl(this);
         //设置沉浸式状态栏
-        //Utils.setTranslucentStatusBar(this, true);
+        Utils.setTranslucentStatusBar(this, true);
         ActivityTuYouBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_tu_you);
+
         //init presenter
         //init DataBinding
         EventTuYou eventTuyou = new EventTuYou(mPresenter, this);
         binding.setEventTuyou(eventTuyou);
+        NavigationView navigation = binding.mainNavigation;
 
         //进入时手动点击 消息 的Fragment(暂时没有什么好的办法来解决这个问题)
         if (savedInstanceState == null) {
@@ -42,7 +45,6 @@ public class TuYouActivity extends AppCompatActivity implements ITuYouView {
             rbMsg.setChecked(true);
             eventTuyou.clickBottomNavigation(rbMsg);
         }
-
 
 
     }

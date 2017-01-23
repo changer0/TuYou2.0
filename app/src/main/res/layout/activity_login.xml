@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.lulu.tuyou.view.LoginActivity">
+
     <data>
         <variable
             name="user"
@@ -11,52 +13,170 @@
             name="eventHandler"
             type="com.lulu.tuyou.view.event_handler.EventLogin"/>
     </data>
-    <android.support.v4.widget.NestedScrollView
-        android:orientation="vertical"
+
+    <RelativeLayout
         android:id="@+id/activity_login"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <AutoCompleteTextView
-                    android:inputType="textAutoComplete"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:hint="请输入用户名"
-                    android:text="@={user.username}"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </android.support.design.widget.TextInputLayout>
+        android:layout_height="match_parent"
+        android:background="@color/colorApp4"
+        android:orientation="vertical">
 
-            <android.support.design.widget.TextInputLayout
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/login_app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/login_toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <AutoCompleteTextView
-                    android:inputType="textPassword"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:hint="请输入密码"
-                    android:text="@={user.password}"
+                android:layout_height="?actionBarSize"
+                />
+
+        </android.support.design.widget.AppBarLayout>
+
+        <!--登陆界面-->
+        <LinearLayout
+            android:id="@+id/login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/login_app_bar"
+            android:orientation="vertical">
+
+
+            <android.support.v7.widget.CardView
+                style="@style/login_card_view">
+
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_gravity="center_vertical"
+                        android:padding="5dp"
+                        android:src="@mipmap/ic_login_user"/>
+
+                    <EditText
+                        android:id="@+id/fragment_account_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:background="@null"
+                        android:hint="图友账号"
+                        />
+                </LinearLayout>
+
+
+            </android.support.v7.widget.CardView>
+
+
+            <android.support.v7.widget.CardView
+                style="@style/login_card_view">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_gravity="center_vertical"
+                        android:padding="5dp"
+                        android:src="@mipmap/ic_login_pwd"/>
+
+                    <EditText
+                        android:id="@+id/fragment_account_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:background="@null"
+                        android:hint="密码"
+                        android:inputType="textPassword"/>
+
+                </LinearLayout>
+
+
+            </android.support.v7.widget.CardView>
+
 
             <Button
-                android:text="登 录"
-                android:onClick="@{ eventHandler.loginClick }"
+                android:id="@+id/fragment_account_login"
+                style="@style/login_register_btn"
+                android:text="@string/login_btn_login"/>
+
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:id="@+id/fragment_account_reg"
+                    style="@style/login_forget_register_btn"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/login_register"/>
+
+                <TextView
+                    android:id="@+id/fragment_account_forget_pwd"
+                    style="@style/login_forget_register_btn"
+                    android:layout_alignParentLeft="true"
+                    android:text="@string/login_forget_pwd"/>
+            </RelativeLayout>
+
+
         </LinearLayout>
 
-    </android.support.v4.widget.NestedScrollView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/login_other_login"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:text="@string/login_other_login"/>
+
+        <LinearLayout
+            android:id="@+id/login_other_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="40dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/other_login_btn_qq"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:drawableTop="@mipmap/ic_login_qq"
+                android:gravity="center_horizontal"
+                android:text="@string/login_qq"/>
+
+            <TextView
+                android:id="@+id/other_login_btn_sina"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:drawableTop="@mipmap/ic_login_weibo"
+                android:gravity="center_horizontal"
+                android:text="@string/login_sina"/>
+
+
+        </LinearLayout>
+
+
+        <!--<Button-->
+        <!--android:id="@+id/other_login_btn_cancel"-->
+        <!--android:text="取消授权"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"/>-->
+
+
+    </RelativeLayout>
 
 </layout>
 

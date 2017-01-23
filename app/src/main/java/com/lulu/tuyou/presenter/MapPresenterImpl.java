@@ -35,10 +35,11 @@ import com.amap.api.services.nearby.NearbySearchFunctionType;
 import com.amap.api.services.nearby.NearbySearchResult;
 import com.amap.api.services.nearby.UploadInfo;
 import com.lulu.tuyou.R;
-import com.lulu.tuyou.adapter.MapAdapter;
+import com.lulu.tuyou.common.CommonRecyclerAdapter;
 import com.lulu.tuyou.common.Constant;
 import com.lulu.tuyou.utils.Utils;
 import com.lulu.tuyou.view.IMapView;
+import com.lulu.tuyou.viewholder.MapViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,21 +50,17 @@ import okhttp3.internal.Util;
  * Created by lulu on 2017/1/18.
  * 地图Presenter核心业务类
  */
-public class MapPresenterImpl implements IMapPresenter, NestedScrollView.OnScrollChangeListener, AMapLocationListener, LocationSource, AMap.OnMapTouchListener, AMap.OnCameraChangeListener, AMap.OnMarkerClickListener, NearbySearch.NearbyListener {
+public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, LocationSource, AMap.OnMapTouchListener, AMap.OnCameraChangeListener, AMap.OnMarkerClickListener, NearbySearch.NearbyListener {
     private IMapView mMapFragmentView;
     private List<String> mList;
     private Context mContext;
-    private NestedScrollView mNestedScrollView;
-    private ImageView mUpArrowsImg;
-    private MapView mMapView;
     private AMap mAMap;
-    private RecyclerView mRecyclerView;
     private Marker mMyMarker; //地图上“我”的点
     private List<Marker> mOtherMakers;//地图上“其他人”的点
     private boolean isDrag = false; //是否是拖拽状态
     private float currentZoom = 15; //当前的放大级别
     private NearbySearch mNearbySearch; //附近
-    private static final int DURATION = 500;
+
     private boolean isToast = false;
 
     public MapPresenterImpl(IMapView mapFragmentView, Context context) {
@@ -76,12 +73,7 @@ public class MapPresenterImpl implements IMapPresenter, NestedScrollView.OnScrol
     ///////////////////////////////////////////////////////////////////////////
     @Override
     public void initData() {
-        mNestedScrollView = mMapFragmentView.onGetNestedScroll();
-        mUpArrowsImg = mMapFragmentView.onGetUpArrowsImg();
-        mMapView = mMapFragmentView.onGetMapView();
-        mRecyclerView = mMapFragmentView.onGetRecyclerView();
-        mNestedScrollView.setOnScrollChangeListener(this);
-        mAMap = mMapView.getMap();
+        mAMap = mMapFragmentView.onGetAMap();
         //触摸监听事件
         mAMap.setOnMapTouchListener(this);
         //可视范围改变监听
@@ -93,19 +85,9 @@ public class MapPresenterImpl implements IMapPresenter, NestedScrollView.OnScrol
         mOtherMakers = new ArrayList<>();
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // 用于再次点击Map页面时的数据刷新用
-    ///////////////////////////////////////////////////////////////////////////
-    @Override
-    public void refreshData(Fragment fragment) {
-        if (fragment.isAdded()) {
-            mNestedScrollView.scrollTo(0, 0);
-        }
-    }
 
     private AMapLocationClientOption mLocationOption = null;
     private AMapLocationClient mLocationClient = null;
-
     ///////////////////////////////////////////////////////////////////////////
     // 定位开启
     ///////////////////////////////////////////////////////////////////////////
@@ -249,7 +231,6 @@ public class MapPresenterImpl implements IMapPresenter, NestedScrollView.OnScrol
                     MarkerOptions options = new MarkerOptions();
                     options.position(latLng)
                             .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_other_mark))
-                            .title(info.getUserID())
                             .draggable(false);
                     Marker marker = mAMap.addMarker(options);
                     mOtherMakers.add(marker);
@@ -298,10 +279,7 @@ public class MapPresenterImpl implements IMapPresenter, NestedScrollView.OnScrol
     ///////////////////////////////////////////////////////////////////////////
     @Override
     public boolean onMarkerClick(Marker marker) {
-        String markerId = marker.getId();
-        if (markerId.equals(mMyMarker.getId())) {
-            hideUpArrows();
-        }
+        mMapFragmentView.hideUpArrows();
         return false;
     }
 
@@ -347,70 +325,18 @@ public class MapPresenterImpl implements IMapPresenter, NestedScrollView.OnScrol
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // 隐藏向上的箭头
-    ///////////////////////////////////////////////////////////////////////////
-    @Override
-    public void hideUpArrows() {
-        //防止RecyclerView滚动到顶部
-        mNestedScrollView.setVisibility(View.VISIBLE);
-        mNestedScrollView.scrollTo(0, 0);
-        float emptyH = mContext.getResources().getDimension(R.dimen.map_empty_view_height);
-        //向上箭头缓慢消失
-        AlphaAnimation alphaAnim = new AlphaAnimation(1, 0);
-        alphaAnim.setDuration(DURATION);
-        alphaAnim.start();
-        mUpArrowsImg.setAnimation(alphaAnim);
-        //动画移动上去
-        TranslateAnimation animation = new TranslateAnimation(
-                0, 0, (Constant.screenHeight - emptyH), 0);
-        animation.setDuration(DURATION);
-        animation.start();
-        mNestedScrollView.setAnimation(animation);
-        mUpArrowsImg.setVisibility(View.INVISIBLE);
 
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // 隐藏空白的区域
-    ///////////////////////////////////////////////////////////////////////////
-    @Override
-    public void hideEmptyView() {
-        mUpArrowsImg.setVisibility(View.VISIBLE);
-        float emptyH = mContext.getResources().getDimension(R.dimen.map_empty_view_height);
-        //向上箭头缓慢消失
-        AlphaAnimation alphaAnim = new AlphaAnimation(0, 1);
-        alphaAnim.setDuration(DURATION);
-        alphaAnim.start();
-        mUpArrowsImg.setAnimation(alphaAnim);
-        //动画移动上去
-        TranslateAnimation animation = new TranslateAnimation(
-                0, 0, 0, (Constant.screenHeight - emptyH));
-        animation.setDuration(DURATION);
-        animation.start();
-        mNestedScrollView.setAnimation(animation);
-        mNestedScrollView.setVisibility(View.INVISIBLE);
-    }
 
     @Override
     public void loadRecycler(RecyclerView recyclerView) {
         mList = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 1; i++) {
             mList.add("测试数据 " + i);
         }
-        MapAdapter adapter = new MapAdapter(mContext, mList);
+        CommonRecyclerAdapter<String> adapter = new CommonRecyclerAdapter<>(MapViewHolder.class);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // // TODO: 2017/1/20 暂定 
-    ///////////////////////////////////////////////////////////////////////////
-    private int currentScrollY;
-
-    @Override
-    public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-        currentScrollY = scrollY;
+        adapter.setDataList(mList);
     }
 
 

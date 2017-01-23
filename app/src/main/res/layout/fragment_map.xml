@@ -15,7 +15,7 @@
             android:onClick="@{event.clickBottomUpArrows}"
             android:layout_alignParentBottom="true"
             android:id="@+id/map_ic_up"
-            android:background="#ffffffff"
+            android:background="@color/map_recycler_background"
             android:src="@mipmap/ic_arrow_up"
             android:layout_width="match_parent"
             android:layout_height="@dimen/map_up_img_height"/>
@@ -45,11 +45,17 @@
                     android:layout_height="@dimen/map_empty_view_height"/>
                 <!--先gone掉，之后点击地图上点显示-->
                 <android.support.v7.widget.RecyclerView
-                    android:background="#ffffffff"
+                    android:background="@color/map_recycler_background"
                     android:nestedScrollingEnabled="false"
                     android:id="@+id/map_recycler"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
+                <TextView
+                    android:gravity="center"
+                    android:text="@string/map_bottom_no_more"
+                    android:background="@color/map_recycler_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/map_bottom_no_more"/>
 
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>

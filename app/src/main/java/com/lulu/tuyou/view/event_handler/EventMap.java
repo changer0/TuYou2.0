@@ -5,6 +5,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.lulu.tuyou.presenter.IMapPresenter;
+import com.lulu.tuyou.view.IMapView;
 
 /**
  * Created by lulu on 2017/1/18.
@@ -13,10 +14,12 @@ import com.lulu.tuyou.presenter.IMapPresenter;
 public class EventMap {
     private Context mContext;
     private IMapPresenter mPresenter;
+    private IMapView mMapView;
 
-    public EventMap(Context context, IMapPresenter presenter) {
+    public EventMap(Context context, IMapPresenter presenter, IMapView mapView) {
         mContext = context;
         mPresenter = presenter;
+        mMapView = mapView;
     }
 
     /**
@@ -24,7 +27,7 @@ public class EventMap {
      * @param view
      */
     public void clickBottomUpArrows(View view) {
-        mPresenter.hideUpArrows();
+        mMapView.hideUpArrows();
     }
 
     /**
@@ -34,7 +37,7 @@ public class EventMap {
     public boolean touchEmptyView(View view, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                mPresenter.hideEmptyView();
+                mMapView.hideEmptyView();
                 break;
         }
         return true;

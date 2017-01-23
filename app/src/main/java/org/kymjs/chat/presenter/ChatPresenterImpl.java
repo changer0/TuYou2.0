@@ -33,7 +33,6 @@ import org.kymjs.chat.module.Message;
 import org.kymjs.chat.view.IChatView;
 import org.kymjs.chat.widget.KJChatKeyboard;
 import org.kymjs.kjframe.ui.ViewInject;
-import org.kymjs.kjframe.utils.FileUtils;
 import org.kymjs.kjframe.utils.KJLoger;
 
 import java.io.File;

@@ -13,7 +13,7 @@ import com.lulu.tuyou.common.Constant;
 
 public class Utils {
     /**
-     * 沉浸式状态栏，白色titlebar推荐设置透明状态栏，游戏中心专用，解决刷新后UIbug
+     * 沉浸式状态栏，
      *
      * @param activity
      */
