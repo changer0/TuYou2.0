@@ -15,12 +15,23 @@
     <string name="navigation_attention">我关注的人</string>
     <string name="navigation_about">关于图友</string>
     <string name="navigation_setting">设置</string>
-    <string name="login_other_login">---------- 第三方登陆 ----------</string>
-    <string name="login_sina">新浪登陆</string>
-    <string name="login_qq">QQ登陆</string>
+    <string name="login_other_login">---------- 第三方登录 ----------</string>
+    <string name="login_sina">新浪登录</string>
+    <string name="login_qq">QQ登录</string>
     <string name="login_btn_login">登 录</string>
     <string name="login_register">免费注册</string>
-    <string name="login_forget_pwd">忘记密码</string>
-    <string name="login_logining">正在登陆...</string>
-    <string name="login_text">登陆</string>
+    <string name="login_clear_all">清空所有</string>
+    <string name="login_logining">正在登录...</string>
+    <string name="login_text">登录</string>
+
+    <string name="register_tv_user_name">用 户 名：</string>
+    <string name="register_tv_pwd">密    码:</string>
+    <string name="register_tv_pwd2">重复密码：</string>
+    <string name="register_et_user_name">请输入您的用户名</string>
+    <string name="register_et_pwd">请输入您的密码</string>
+    <string name="register_et_pwd2">请再次输入密码</string>
+    <string name="login_success">登录成功</string>
+    <string name="login_failed">登录失败</string>
+    <string name="reg_reging">正在注册...</string>
+    <string name="reg_text">注册</string>
 </resources>

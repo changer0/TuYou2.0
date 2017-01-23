@@ -34,17 +34,16 @@
 
                     <TextView
                         android:id="@+id/reg_tv_username"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/register_card_left_width"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:padding="5dp"
-                        android:text="用户名: "/>
+                        android:text="@string/register_tv_user_name"/>
 
                     <EditText
                         android:id="@+id/reg_et_username"
                         style="@style/register_edit_text"
-                        android:hint="请输入您的用户名"
-
+                        android:hint="@string/register_et_user_name"
                         />
 
                 </LinearLayout>
@@ -61,20 +60,21 @@
                     android:orientation="horizontal">
                     <TextView
                         android:id="@+id/reg_tv_password"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/register_card_left_width"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:padding="5dp"
-                        android:text="密码  : "/>
+                        android:text="@string/register_tv_pwd"/>
 
                     <EditText
                         android:id="@+id/reg_et_password"
                         style="@style/register_edit_text"
-                        android:hint="请输入您的密码"
+                        android:hint="@string/register_et_pwd"
                         android:inputType="textPassword"/>
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
+
             <android.support.v7.widget.CardView
                 android:id="@+id/reg_cv_password2"
                 style="@style/register_card_view">
@@ -84,15 +84,15 @@
                     android:orientation="horizontal">
                     <TextView
                         android:id="@+id/reg_tv_password2"
-                        android:layout_width="wrap_content"
+                        android:layout_width="@dimen/register_card_left_width"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:padding="5dp"
-                        android:text="重复密码: "/>
+                        android:text="@string/register_tv_pwd2"/>
                     <EditText
                         android:id="@+id/reg_et_password2"
                         style="@style/register_edit_text"
-                        android:hint="请再次输入密码"
+                        android:hint="@string/register_et_pwd2"
                         android:inputType="textPassword"/>
                 </LinearLayout>
             </android.support.v7.widget.CardView>

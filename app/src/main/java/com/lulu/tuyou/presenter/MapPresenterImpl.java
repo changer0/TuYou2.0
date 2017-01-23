@@ -328,7 +328,7 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
 
 
     @Override
-    public void loadRecycler(RecyclerView recyclerView) {
+    public void initRecycler(RecyclerView recyclerView) {
         mList = new ArrayList<>();
         for (int i = 0; i < 1; i++) {
             mList.add("测试数据 " + i);

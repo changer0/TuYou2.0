@@ -5,15 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.lulu.tuyou.view.LoginActivity">
 
-    <data>
-        <variable
-            name="user"
-            type="com.lulu.tuyou.model.TuYouUser"/>
-        <variable
-            name="eventHandler"
-            type="com.lulu.tuyou.view.event_handler.EventLogin"/>
-    </data>
-
     <RelativeLayout
         android:id="@+id/activity_login"
         android:layout_width="match_parent"
@@ -35,7 +26,7 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <!--登陆界面-->
+        <!--登录界面-->
         <LinearLayout
             android:id="@+id/login"
             android:layout_width="match_parent"
@@ -60,7 +51,7 @@
                         android:src="@mipmap/ic_login_user"/>
 
                     <EditText
-                        android:id="@+id/fragment_account_name"
+                        android:id="@+id/login_account_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
@@ -89,7 +80,7 @@
                         android:src="@mipmap/ic_login_pwd"/>
 
                     <EditText
-                        android:id="@+id/fragment_account_password"
+                        android:id="@+id/login_account_password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
@@ -104,7 +95,7 @@
 
 
             <Button
-                android:id="@+id/fragment_account_login"
+                android:id="@+id/login_account_login"
                 style="@style/login_register_btn"
                 android:text="@string/login_btn_login"/>
 
@@ -116,16 +107,16 @@
                 android:layout_marginTop="10dp">
 
                 <TextView
-                    android:id="@+id/fragment_account_reg"
+                    android:id="@+id/login_account_reg"
                     style="@style/login_forget_register_btn"
                     android:layout_alignParentRight="true"
                     android:text="@string/login_register"/>
 
                 <TextView
-                    android:id="@+id/fragment_account_forget_pwd"
+                    android:id="@+id/login_account_clear_all"
                     style="@style/login_forget_register_btn"
                     android:layout_alignParentLeft="true"
-                    android:text="@string/login_forget_pwd"/>
+                    android:text="@string/login_clear_all"/>
             </RelativeLayout>
 
 

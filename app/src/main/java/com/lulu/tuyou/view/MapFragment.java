@@ -10,6 +10,7 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -23,15 +24,15 @@ import com.lulu.tuyou.common.Constant;
 import com.lulu.tuyou.databinding.FragmentMapBinding;
 import com.lulu.tuyou.presenter.IMapPresenter;
 import com.lulu.tuyou.presenter.MapPresenterImpl;
-import com.lulu.tuyou.view.event_handler.EventMap;
 
 /**
  * A simple {@link Fragment} subclass.
  * 地图Fragment
  */
-public class MapFragment extends Fragment implements IMapView{
+public class MapFragment extends Fragment implements IMapView, View.OnClickListener, View.OnTouchListener {
     private static final int DURATION = 500;
     private static MapFragment instance;
+    private View mEmptyView;
 
     public static MapFragment newInstance() {
         if (instance == null) {
@@ -62,12 +63,9 @@ public class MapFragment extends Fragment implements IMapView{
         initView(binding);
         // 创建地图
         mMapView.onCreate(savedInstanceState);
-        EventMap eventMap = new EventMap(mContext, mPresenter, this);
-        binding.setEvent(eventMap);
-        //加载RecyclerView
-        mPresenter.loadRecycler(mRecyclerView);
         //初始化Presenter的数据
         mPresenter.initData();
+        mPresenter.initRecycler(mRecyclerView);
         //开启定位
         mPresenter.startLocation();
         return binding.getRoot();
@@ -79,14 +77,41 @@ public class MapFragment extends Fragment implements IMapView{
         mRecyclerView = binding.mapRecycler;
         mUpArrowsImg = binding.mapIcUp;
         mNestedScrollView = binding.mapScrollView;
+        mEmptyView = binding.mapEmptyView;
         //监听事件注册
-
+        mUpArrowsImg.setOnClickListener(this);
+        mEmptyView.setOnTouchListener(this);
         //给向上的箭头图片着色
         ImageView upImg = binding.mapIcUp;
         Drawable upDrawable = getResources().getDrawable(R.mipmap.ic_arrow_up, mContext.getTheme());
         Drawable tintUpDrawable = DrawableCompat.wrap(upDrawable);
         DrawableCompat.setTint(tintUpDrawable, getResources().getColor(R.color.colorApp1));
         upImg.setImageDrawable(tintUpDrawable);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 点击回调
+    ///////////////////////////////////////////////////////////////////////////
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.map_ic_up:
+                hideUpArrows();
+                break;
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 触摸回调
+    ///////////////////////////////////////////////////////////////////////////
+    @Override
+    public boolean onTouch(View view, MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                hideEmptyView();
+                return true;
+        }
+        return false;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -143,6 +168,7 @@ public class MapFragment extends Fragment implements IMapView{
             mNestedScrollView.scrollTo(0, 0);
         }
     }
+
     ///////////////////////////////////////////////////////////////////////////
     // 给Presenter提供的AMap
     ///////////////////////////////////////////////////////////////////////////
@@ -150,7 +176,6 @@ public class MapFragment extends Fragment implements IMapView{
     public AMap onGetAMap() {
         return mMapView.getMap();
     }
-
 
 
     ///////////////////////////////////////////////////////////////////////////
@@ -193,5 +218,7 @@ public class MapFragment extends Fragment implements IMapView{
         super.onSaveInstanceState(outState);
         mMapView.onSaveInstanceState(outState);
     }
+
+
     // ----------------------------------------------------
 }

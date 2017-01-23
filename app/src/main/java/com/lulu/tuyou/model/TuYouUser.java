@@ -32,7 +32,7 @@ public class TuYouUser extends BmobUser implements Comparable<TuYouUser> {
     private String sinaId;//新浪
     private String weiChatId;//微信
     private String type;//账号类型
-    private String qqToken;// 第三方登陆的标示
+    private String qqToken;// 第三方登录的标示
     private String backupPwd; //备份的密码
     private String city;
     private String nickName;//昵称
@@ -134,7 +134,7 @@ public class TuYouUser extends BmobUser implements Comparable<TuYouUser> {
 
     public String getIcon() {
         if (TextUtils.isEmpty(icon)) {
-            return "http://q.qlogo.cn/qqapp/100371282/D4280B8B06B1D1C9221284CC80DD2443/40";
+            return "http://download.easyicon.net/png/1192335/64/";
         }
         return icon;
     }

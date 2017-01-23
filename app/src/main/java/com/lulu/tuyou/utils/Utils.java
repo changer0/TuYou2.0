@@ -1,10 +1,13 @@
 package com.lulu.tuyou.utils;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.telephony.TelephonyManager;
 import android.view.Window;
 
+import com.lulu.tuyou.R;
 import com.lulu.tuyou.common.Constant;
 
 /**
@@ -39,4 +42,16 @@ public class Utils {
         imei = telephonyManager.getDeviceId();
         return imei;
     }
+
+    public static Dialog createLoadingDialog(Context context, String title, String msg) {
+        //创建正在登录的Dialog
+        ProgressDialog loadingDialog = new ProgressDialog(context);
+        loadingDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        loadingDialog.setTitle(title);
+        loadingDialog.setMessage(msg);
+        loadingDialog.setCancelable(false);
+        return loadingDialog;
+    }
+
+
 }

@@ -18,10 +18,10 @@ public class TuYouApp extends Application {
     public void onCreate() {
         super.onCreate();
 
-        //Bmob云服务初始化
-        Bmob.initialize(getApplicationContext(), "2482bb6e1055efb08aedcd42799133e7");
-        // 初始化参数依次为 this, AppId, AppKey
-        AVOSCloud.initialize(this,"Rb3fPdUYpICYkO67j62sIlB5-gzGzoHsz","K0KTtgoOYxtBpzrq0z1V03UL");
+//        //Bmob云服务初始化
+//        Bmob.initialize(getApplicationContext(), "2482bb6e1055efb08aedcd42799133e7");
+//        // 初始化参数依次为 this, AppId, AppKey
+//        AVOSCloud.initialize(this,"Rb3fPdUYpICYkO67j62sIlB5-gzGzoHsz","K0KTtgoOYxtBpzrq0z1V03UL");
         //获取设备参数
         getDeviceWidth();
     }

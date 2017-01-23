@@ -5,13 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.lulu.tuyou.view.TuYouActivity">
 
-    <data>
-
-        <variable
-            name="eventTuyou"
-            type="com.lulu.tuyou.view.event_handler.EventTuYou"/>
-    </data>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -45,7 +38,6 @@
                         android:id="@+id/main_rb_msg"
                         style="@style/RadioGroupStyle"
                         android:drawableTop="@mipmap/ic_chat"
-                        android:onClick="@{eventTuyou.clickBottomNavigation}"
                         android:text="@string/bottom_navgation_msg"
                         />
 
@@ -53,14 +45,12 @@
                         android:id="@+id/main_rb_map"
                         style="@style/RadioGroupStyle"
                         android:drawableTop="@mipmap/ic_map"
-                        android:onClick="@{eventTuyou.clickBottomNavigation}"
                         android:text="@string/bottom_navgation_map"/>
 
                     <RadioButton
                         android:id="@+id/main_rb_circle"
                         style="@style/RadioGroupStyle"
                         android:drawableTop="@mipmap/ic_circle"
-                        android:onClick="@{eventTuyou.clickBottomNavigation}"
                         android:text="@string/bottom_navgation_circle"/>
                 </RadioGroup>
             </LinearLayout>
@@ -73,6 +63,8 @@
                 android:background="@color/colorWrite"
                 android:overScrollMode="never"
                 app:headerLayout="@layout/navigation_header_login"
+                app:itemIconTint="@color/sel_nav_color"
+                app:itemTextAppearance="@style/TextAppearance.AppCompat.Large"
                 app:itemTextColor="@color/sel_nav_color"
                 app:menu="@menu/menu_navigation"
                 />

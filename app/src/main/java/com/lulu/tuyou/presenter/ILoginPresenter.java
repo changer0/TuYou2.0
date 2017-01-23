@@ -8,6 +8,5 @@ import android.app.Dialog;
  */
 
 public interface ILoginPresenter {
-    void clear();
     void doLogin(String name, String passwd, Dialog loginingDialog);
 }

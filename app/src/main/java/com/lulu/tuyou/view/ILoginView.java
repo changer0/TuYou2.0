@@ -8,9 +8,7 @@ import android.app.Dialog;
  */
 
 public interface ILoginView {
-    void onClearText();
-    void onLoginResult(boolean result, int code);
-
-    Dialog createLoginingDialog();
-    void dimissLoginingDialog(Dialog dialog);
+    void onLoginResult(boolean isSuccess, int code);
+    void dimissLoadingDialog(Dialog dialog);
+    void jumpToRegisterActivity();
 }

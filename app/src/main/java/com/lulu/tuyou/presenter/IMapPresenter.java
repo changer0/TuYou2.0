@@ -12,8 +12,8 @@ import com.amap.api.maps2d.MapView;
  */
 
 public interface IMapPresenter {
-    void loadRecycler(RecyclerView recyclerView);
     void initData();
     void startLocation();
     void onDestroy();
+    void initRecycler(RecyclerView recyclerView);
 }

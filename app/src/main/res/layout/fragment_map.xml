@@ -3,16 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.lulu.tuyou.view.MapFragment">
-    <data>
-        <variable
-            name="event"
-            type="com.lulu.tuyou.view.event_handler.EventMap"/>
-    </data>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <ImageView
-            android:onClick="@{event.clickBottomUpArrows}"
             android:layout_alignParentBottom="true"
             android:id="@+id/map_ic_up"
             android:background="@color/map_recycler_background"
@@ -39,7 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <View
-                    android:onTouch="@{event.touchEmptyView}"
+                    android:id="@+id/map_empty_view"
                     android:background="#00000000"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/map_empty_view_height"/>
