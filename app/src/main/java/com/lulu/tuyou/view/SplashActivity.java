@@ -1,17 +1,20 @@
 package com.lulu.tuyou.view;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.avos.avoscloud.AVOSCloud;
 import com.lulu.tuyou.R;
 import com.lulu.tuyou.common.Constant;
 import com.lulu.tuyou.model.TuYouUser;
+import com.lulu.tuyou.utils.Utils;
 
 import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobQuery;
@@ -24,6 +27,7 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.setTranslucentStatusBar(this, true);
         setContentView(R.layout.activity_splash);
         //Bmob云服务初始化
         Bmob.initialize(getApplicationContext(), "2482bb6e1055efb08aedcd42799133e7");

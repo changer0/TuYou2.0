@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:orientation="vertical">
+
+
+        <LinearLayout
+            android:id="@+id/item_navigation_attention"
+            style="@style/navigation_item">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@mipmap/ic_app"/>
+
+            <TextView
+                style="@style/navigation_item_text"
+                android:text="@string/navigation_attention"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/item_navigation_about"
+            style="@style/navigation_item">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@mipmap/ic_app"/>
+
+            <TextView
+                style="@style/navigation_item_text"
+                android:text="@string/navigation_about"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/navigation_setting"
+            style="@style/navigation_item">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@mipmap/ic_app"/>
+
+            <TextView
+                style="@style/navigation_item_text"
+                android:text="@string/navigation_setting"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="bottom">
+
+            <Button
+                android:id="@+id/navigation_logout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/sel_nav_loginout"
+                android:text="@string/navigation_logout"/>
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+</layout>

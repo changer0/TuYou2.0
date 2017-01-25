@@ -31,8 +31,6 @@
             android:name="com.amap.api.v2.apikey"
             android:value="6fb613e94da3a60314b239017ebcd480"/>
 
-        <activity android:name="org.kymjs.chat.view.ChatActivity"/>
-
         <!-- 实时通信模块、推送（均需要加入以下声明） START -->
         <!-- 实时通信模块、推送都要使用 PushService -->
         <service android:name="com.avos.avoscloud.PushService"/>
@@ -46,7 +44,6 @@
         </receiver>
         <!-- 实时通信模块、推送 END -->
 
-
         <activity android:name=".MainActivity">
         </activity>
         <activity
@@ -56,6 +53,7 @@
         </activity>
         <activity
             android:name=".view.TuYouActivity"
+            android:theme="@style/TuYouActivityTheme"
             android:screenOrientation="portrait">
 
             <!-- <intent-filter> -->

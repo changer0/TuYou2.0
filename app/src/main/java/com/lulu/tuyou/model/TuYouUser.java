@@ -5,6 +5,7 @@ import android.util.Base64;
 import android.view.View;
 import android.widget.Toast;
 
+import com.lulu.tuyou.common.Constant;
 import com.lulu.tuyou.utils.TuYouCryptUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -145,7 +146,7 @@ public class TuYouUser extends BmobUser implements Comparable<TuYouUser> {
 
     public String getSex() {
         if (TextUtils.isEmpty(sex)) {
-            return "男";
+            return Constant.SEX_BOY;
         }
         return sex;
     }

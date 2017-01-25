@@ -1,19 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
     <!--坑啊，忘了设置height为wrap_content耽误了好一会儿啊-->
-    <LinearLayout
+    <android.support.v7.widget.CardView
+        style="@style/map_item_card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:foreground="?attr/selectableItemBackground"
         android:orientation="vertical">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:padding="5dp">
 
-        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:id="@+id/text"
-                  android:layout_width="match_parent"
-                  android:layout_height="?android:attr/listPreferredItemHeight"
-                  android:gravity="center_vertical"
-                  android:paddingStart="?android:attr/expandableListPreferredItemPaddingLeft"
-            />
-    </LinearLayout>
+            <ImageView
+                android:id="@+id/map_item_icon"
+                android:layout_width="@dimen/img_width"
+                android:layout_height="@dimen/img_height"
+                android:layout_centerVertical="true"
+                tools:src="@mipmap/ic_app"/>
+
+            <TextView
+                android:id="@+id/map_item_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/map_item_icon"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/map_item_icon"
+                tools:text="用户名"/>
+
+            <ImageView
+                android:id="@+id/map_item_sex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/map_item_nickname"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@id/map_item_nickname"
+                android:src="@mipmap/sex_boy"/>
+
+            <TextView
+                android:id="@+id/map_item_age"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/map_item_sex"
+                android:layout_marginLeft="20dp"
+                android:layout_toRightOf="@id/map_item_sex"/>
+
+            <ImageView
+                android:id="@+id/map_item_attention"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="5dp"
+                android:src="@mipmap/ic_no_attention"/>
+
+            <TextView
+                android:id="@+id/map_item_duration_mi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:text="米"/>
+
+            <TextView
+                android:id="@+id/map_item_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="2dp"
+                android:layout_toLeftOf="@id/map_item_duration_mi"
+                android:text="0"/>
+
+            <ImageView
+                android:id="@+id/map_item_hi"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignTop="@id/map_item_attention"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@id/map_item_attention"
+                android:src="@mipmap/ic_hi"/>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
 </layout>

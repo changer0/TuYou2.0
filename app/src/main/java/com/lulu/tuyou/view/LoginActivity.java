@@ -86,7 +86,6 @@ public class LoginActivity extends AppCompatActivity implements ILoginView, View
         }
     }
 
-    @Override
     public void dimissLoadingDialog(Dialog dialog) {
         if (dialog != null) {
             if (dialog.isShowing()) {
@@ -95,10 +94,8 @@ public class LoginActivity extends AppCompatActivity implements ILoginView, View
         }
     }
 
-    @Override
     public void jumpToRegisterActivity() {
         startActivity(new Intent(this, RegisterActivity.class));
-        finish();
     }
 
 

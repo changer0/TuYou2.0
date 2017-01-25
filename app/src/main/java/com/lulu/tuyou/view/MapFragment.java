@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.MapView;
@@ -29,10 +31,13 @@ import com.lulu.tuyou.presenter.MapPresenterImpl;
  * A simple {@link Fragment} subclass.
  * 地图Fragment
  */
-public class MapFragment extends Fragment implements IMapView, View.OnClickListener, View.OnTouchListener {
+public class MapFragment extends Fragment implements IMapView, View.OnClickListener, View.OnTouchListener, NestedScrollView.OnScrollChangeListener {
     private static final int DURATION = 500;
     private static MapFragment instance;
     private View mEmptyView;
+    private int mCurrentScrollY;
+    private boolean mUserScrolling = false;
+    private int mCurrentScrollX;
 
     public static MapFragment newInstance() {
         if (instance == null) {
@@ -81,12 +86,15 @@ public class MapFragment extends Fragment implements IMapView, View.OnClickListe
         //监听事件注册
         mUpArrowsImg.setOnClickListener(this);
         mEmptyView.setOnTouchListener(this);
+        mNestedScrollView.setOnTouchListener(this);
+        mNestedScrollView.setOnScrollChangeListener(this);
         //给向上的箭头图片着色
         ImageView upImg = binding.mapIcUp;
         Drawable upDrawable = getResources().getDrawable(R.mipmap.ic_arrow_up, mContext.getTheme());
         Drawable tintUpDrawable = DrawableCompat.wrap(upDrawable);
         DrawableCompat.setTint(tintUpDrawable, getResources().getColor(R.color.colorApp1));
         upImg.setImageDrawable(tintUpDrawable);
+
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -96,7 +104,11 @@ public class MapFragment extends Fragment implements IMapView, View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.map_ic_up:
-                hideUpArrows();
+                if (MapPresenterImpl.isHaveFriends) {
+                    hideUpArrows();
+                } else {
+                    Toast.makeText(mContext, R.string.map_no_friends, Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
     }
@@ -106,10 +118,27 @@ public class MapFragment extends Fragment implements IMapView, View.OnClickListe
     ///////////////////////////////////////////////////////////////////////////
     @Override
     public boolean onTouch(View view, MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                hideEmptyView();
-                return true;
+        int action = event.getAction();
+        switch (view.getId()) {
+            case R.id.map_empty_view:
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        hideEmptyView();
+                        return false;
+                }
+                break;
+
+            case R.id.map_scroll_view:
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        mUserScrolling = true;
+                        Log.d("lulu", "MapFragment-onTouch  按下去了");
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        mUserScrolling = false;
+                        break;
+                }
+                break;
         }
         return false;
     }
@@ -160,6 +189,15 @@ public class MapFragment extends Fragment implements IMapView, View.OnClickListe
     }
 
     ///////////////////////////////////////////////////////////////////////////
+    // NestedScrollView的滚动监听
+    ///////////////////////////////////////////////////////////////////////////
+    @Override
+    public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+        mCurrentScrollY = scrollY;
+        mCurrentScrollX = scrollX;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
     // 用于再次点击Map页面时的数据刷新用
     ///////////////////////////////////////////////////////////////////////////
     @Override
@@ -177,6 +215,21 @@ public class MapFragment extends Fragment implements IMapView, View.OnClickListe
         return mMapView.getMap();
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    //用户是否正在滚动
+    ///////////////////////////////////////////////////////////////////////////
+    @Override
+    public boolean onGetIsUserScolling() {
+        return mUserScrolling;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 使其滚回旧的位置
+    ///////////////////////////////////////////////////////////////////////////
+    @Override
+    public void scrollToCurrentY() {
+        mNestedScrollView.scrollTo(mCurrentScrollX, mCurrentScrollY);
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     // 生命周期方法

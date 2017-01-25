@@ -1,16 +1,11 @@
 package com.lulu.tuyou.presenter;
 
 import android.content.Context;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.TranslateAnimation;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
@@ -21,8 +16,7 @@ import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.CameraUpdate;
 import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.LocationSource;
-import com.amap.api.maps2d.MapView;
-import com.amap.api.maps2d.model.BitmapDescriptor;
+import com.amap.api.maps2d.UiSettings;
 import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.CameraPosition;
 import com.amap.api.maps2d.model.LatLng;
@@ -35,24 +29,30 @@ import com.amap.api.services.nearby.NearbySearchFunctionType;
 import com.amap.api.services.nearby.NearbySearchResult;
 import com.amap.api.services.nearby.UploadInfo;
 import com.lulu.tuyou.R;
-import com.lulu.tuyou.common.CommonRecyclerAdapter;
+import com.lulu.tuyou.adapter.MapAdapter;
 import com.lulu.tuyou.common.Constant;
-import com.lulu.tuyou.utils.Utils;
+import com.lulu.tuyou.model.TuYouUser;
 import com.lulu.tuyou.view.IMapView;
-import com.lulu.tuyou.viewholder.MapViewHolder;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
-import okhttp3.internal.Util;
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.QueryListener;
 
 /**
  * Created by lulu on 2017/1/18.
  * 地图Presenter核心业务类
  */
-public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, LocationSource, AMap.OnMapTouchListener, AMap.OnCameraChangeListener, AMap.OnMarkerClickListener, NearbySearch.NearbyListener {
+public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, LocationSource, AMap.OnMapTouchListener,
+        AMap.OnCameraChangeListener, AMap.OnMarkerClickListener, NearbySearch.NearbyListener, MapAdapter.OnChildListener {
     private IMapView mMapFragmentView;
-    private List<String> mList;
+    private List<TuYouUser> mList;
     private Context mContext;
     private AMap mAMap;
     private Marker mMyMarker; //地图上“我”的点
@@ -60,12 +60,13 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
     private boolean isDrag = false; //是否是拖拽状态
     private float currentZoom = 15; //当前的放大级别
     private NearbySearch mNearbySearch; //附近
-
-    private boolean isToast = false;
+    private TuYouUser mCurrentUser;
+    private MapAdapter mAdapter;
 
     public MapPresenterImpl(IMapView mapFragmentView, Context context) {
         mMapFragmentView = mapFragmentView;
         mContext = context;
+        mCurrentUser = Constant.currentUser;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -80,6 +81,7 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
         mAMap.setOnCameraChangeListener(this);
         //Marker监听
         mAMap.setOnMarkerClickListener(this);
+
         mNearbySearch = NearbySearch.getInstance(mContext);
         mNearbySearch.addNearbyListener(this);
         mOtherMakers = new ArrayList<>();
@@ -88,6 +90,7 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
 
     private AMapLocationClientOption mLocationOption = null;
     private AMapLocationClient mLocationClient = null;
+
     ///////////////////////////////////////////////////////////////////////////
     // 定位开启
     ///////////////////////////////////////////////////////////////////////////
@@ -111,7 +114,7 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
             //设置定位模式为高精度模式，Battery_Saving为低功耗模式，Device_Sensors是仅设备模式
             mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
             //设置定位间隔,单位毫秒,默认为2000ms
-            mLocationOption.setInterval(2000);
+            mLocationOption.setInterval(1000 * 10);
             //设置定位参数
             mLocationClient.setLocationOption(mLocationOption);
             // 此方法为每隔固定时间会发起一次定位请求，为了减少电量消耗或网络流量消耗，
@@ -174,6 +177,9 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
         }
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // 添加其他人到Map上
+    ///////////////////////////////////////////////////////////////////////////
     private void addOtherToMap(LatLonPoint point) {
         //设定搜索条件
         NearbySearch.NearbyQuery query = new NearbySearch.NearbyQuery();
@@ -195,6 +201,11 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
     ///////////////////////////////////////////////////////////////////////////
     // 获取附近人的回调接口
     ///////////////////////////////////////////////////////////////////////////
+    private boolean isToast = false;
+    public static boolean isHaveFriends = false;//附近是否有图友
+    private Map<String, TuYouUser> mOldUserHashMap = new HashMap<>();
+    private Map<String, LatLonPoint> mOldPoint = new HashMap<>();
+
     @Override
     public void onUserInfoCleared(int i) {
 
@@ -213,30 +224,98 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
                     mOtherMakers.get(i).remove();
                     mOtherMakers.remove(i);
                 }
+                //先将数据清空
+                mAdapter.clearAllNoRefresh();
+                //需要将现有List集合转为线程安全的
                 Log.d("lulu", "MapPresenterImpl-onNearbyInfoSearched  list:" + list.size());
-                for (NearbyInfo info : list) {
-                    int distance = info.getDistance();
-                    String userID = info.getUserID();
+                List<NearbyInfo> listSafe = Collections.synchronizedList(list);
+                for (int i = 0; i < listSafe.size(); i++) {
+                    final NearbyInfo info = listSafe.get(i);
+                    final int distance = info.getDistance();
+                    final String userID = info.getUserID();
                     //如果是用户自己则需要continue
-                    if (userID.equals(Utils.getIMEI(mContext))) {
+                    if (userID.equals(mCurrentUser.getObjectId())) {
                         //有时会将自己的位置显示出来
                         if (list.size() == 1 && !isToast) {
-                            Toast.makeText(mContext, "附近暂无图友", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, R.string.map_no_friends, Toast.LENGTH_SHORT).show();
+                            MapPresenterImpl.isHaveFriends = false;
                             isToast = true;
                         }
                         continue;
                     }
-                    LatLonPoint point = info.getPoint();
-                    LatLng latLng = new LatLng(point.getLatitude(), point.getLongitude());
-                    MarkerOptions options = new MarkerOptions();
-                    options.position(latLng)
-                            .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_other_mark))
-                            .draggable(false);
-                    Marker marker = mAMap.addMarker(options);
-                    mOtherMakers.add(marker);
+                    MapPresenterImpl.isHaveFriends = true;
+                    final LatLonPoint point = info.getPoint();
+                    LatLonPoint oldPoint = mOldPoint.get(userID);
+                    if (oldPoint != null) {
+                        double oldLat = oldPoint.getLatitude();
+                        double oldLon = oldPoint.getLongitude();
+                        Log.d("lulu", "MapPresenterImpl-onNearbyInfoSearched  lat:" + point.getLatitude());
+                        Log.d("lulu", "MapPresenterImpl-onNearbyInfoSearched  lon:" + point.getLongitude());
+                        Log.d("lulu", "MapPresenterImpl-onNearbyInfoSearched  oldlat:" + oldLat);
+                        Log.d("lulu", "MapPresenterImpl-onNearbyInfoSearched  oldlon:" + oldLon);
+                        //这是一步优化处理，当经纬度都大于1'之后才进行更新
+                        if (Math.abs(oldLat - point.getLatitude()) < (1 / 60.0) && Math.abs(oldLon - point.getLongitude()) < (1 / 60.0)) {
+                            Log.d("lulu", "MapPresenterImpl-onNearbyInfoSearched  执行了优化逻辑");
+                            //此时还是需要把这个用户标记在上面
+                            LatLng latLng = new LatLng(point.getLatitude(), point.getLongitude());
+                            MarkerOptions options = new MarkerOptions();
+                            options.position(latLng)
+                                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_other_mark))
+                                    .draggable(false);
+                            Marker marker = mAMap.addMarker(options);
+                            mOtherMakers.add(marker);
+
+                            TuYouUser user = mOldUserHashMap.get(userID);
+                            if (user != null) {
+                                synchronized (MapPresenterImpl.class) {
+                                    Log.d("lulu", "MapPresenterImpl-onNearbyInfoSearched  添加了");
+                                    user.setDistance(distance);
+                                    mAdapter.add(user, mMapFragmentView.onGetIsUserScolling());
+                                    mMapFragmentView.scrollToCurrentY();
+                                }
+                            }
+
+                            continue;
+                        }
+                    }
+                    //更新旧坐标
+                    mOldPoint.put(userID, point);
+
+                    //根据用户ID查找
+                    BmobQuery<TuYouUser> query = new BmobQuery<>();
+                    query.getObject(userID, new QueryListener<TuYouUser>() {
+                        @Override
+                        public void done(TuYouUser user, BmobException e) {
+                            if (e == null) {
+
+                                LatLng latLng = new LatLng(point.getLatitude(), point.getLongitude());
+                                MarkerOptions options = new MarkerOptions();
+                                options.position(latLng)
+                                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_other_mark))
+                                        .draggable(false);
+                                Marker marker = mAMap.addMarker(options);
+                                mOtherMakers.add(marker);
+                                synchronized (MapPresenterImpl.class) {
+                                    mOldUserHashMap.put(userID, user);
+                                    Log.d("lulu", "MapPresenterImpl-done  添加数据");
+                                    user.setDistance(distance);
+                                    mAdapter.add(user, mMapFragmentView.onGetIsUserScolling());
+                                    mMapFragmentView.scrollToCurrentY();
+                                    Log.d("lulu", "MapPresenterImpl-done  userName" + user.getNickName());
+                                }
+
+                            } else {
+                                Log.d("lulu", "MapPresenterImpl " + e.getMessage());
+                            }
+                        }
+                    });
+
                 }
+
+
             } else {
-                Toast.makeText(mContext, "附近暂无图友！", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, R.string.map_no_friends, Toast.LENGTH_SHORT).show();
+                MapPresenterImpl.isHaveFriends = false;
                 isToast = true;
             }
         } else {
@@ -270,7 +349,7 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
         UploadInfo loadInfo = new UploadInfo();
         loadInfo.setCoordType(NearbySearch.AMAP);
         loadInfo.setPoint(latLonPoint);
-        loadInfo.setUserID(Utils.getIMEI(mContext));
+        loadInfo.setUserID(mCurrentUser.getObjectId());
         mNearbySearch.uploadNearbyInfoAsyn(loadInfo);
     }
 
@@ -326,18 +405,34 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
     }
 
 
-
     @Override
     public void initRecycler(RecyclerView recyclerView) {
-        mList = new ArrayList<>();
-        for (int i = 0; i < 1; i++) {
-            mList.add("测试数据 " + i);
-        }
-        CommonRecyclerAdapter<String> adapter = new CommonRecyclerAdapter<>(MapViewHolder.class);
+        mList = new Vector<>();
+        mAdapter = new MapAdapter(mContext, mList);
+        mAdapter.setListener(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
-        recyclerView.setAdapter(adapter);
-        adapter.setDataList(mList);
+        recyclerView.setAdapter(mAdapter);
+
     }
 
-
+    @Override
+    public void onChildClick(View view) {
+        TuYouUser user = null;
+        Object tag = view.getTag();
+        if (tag != null && tag instanceof TuYouUser) {
+            user = (TuYouUser) tag;
+        }
+        switch (view.getId()) {
+            case R.id.map_item_attention:
+                if (user != null) {
+                    Toast.makeText(mContext, "点击了Attention" + user.getNickName(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.map_item_hi:
+                if (user != null) {
+                    Toast.makeText(mContext, "点击了Hi" + user.getNickName(), Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
 }

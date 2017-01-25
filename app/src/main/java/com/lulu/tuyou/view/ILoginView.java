@@ -10,5 +10,4 @@ import android.app.Dialog;
 public interface ILoginView {
     void onLoginResult(boolean isSuccess, int code);
     void dimissLoadingDialog(Dialog dialog);
-    void jumpToRegisterActivity();
 }
