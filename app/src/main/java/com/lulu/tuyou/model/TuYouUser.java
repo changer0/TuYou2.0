@@ -38,9 +38,18 @@ public class TuYouUser extends BmobUser implements Comparable<TuYouUser> {
     private String city;
     private String nickName;//昵称
 
+    private String installationId;//push用
+
     //注意此项不用与上传Bmob, 仅作为RecycleView中使用
     private int distance;// 与当前用户的距离
 
+    public String getInstallationId() {
+        return installationId;
+    }
+
+    public void setInstallationId(String installationId) {
+        this.installationId = installationId;
+    }
 
     //用于获取年龄
     public int getAge() {

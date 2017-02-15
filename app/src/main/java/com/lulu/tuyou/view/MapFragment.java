@@ -2,6 +2,7 @@ package com.lulu.tuyou.view;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -24,8 +25,12 @@ import com.amap.api.maps2d.MapView;
 import com.lulu.tuyou.R;
 import com.lulu.tuyou.common.Constant;
 import com.lulu.tuyou.databinding.FragmentMapBinding;
+import com.lulu.tuyou.model.TuYouUser;
 import com.lulu.tuyou.presenter.IMapPresenter;
 import com.lulu.tuyou.presenter.MapPresenterImpl;
+
+import cn.leancloud.chatkit.activity.LCIMConversationActivity;
+import cn.leancloud.chatkit.utils.LCIMConstants;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -132,7 +137,7 @@ public class MapFragment extends Fragment implements IMapView, View.OnClickListe
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
                         mUserScrolling = true;
-                        Log.d("lulu", "MapFragment-onTouch  按下去了");
+                        //Log.d("lulu", "MapFragment-onTouch  按下去了");
                         break;
                     case MotionEvent.ACTION_UP:
                         mUserScrolling = false;
@@ -229,6 +234,16 @@ public class MapFragment extends Fragment implements IMapView, View.OnClickListe
     @Override
     public void scrollToCurrentY() {
         mNestedScrollView.scrollTo(mCurrentScrollX, mCurrentScrollY);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 跳转逻辑
+    ///////////////////////////////////////////////////////////////////////////
+    @Override
+    public void jumpToConversationActivity(String userId) {
+        Intent intent = new Intent(mContext, LCIMConversationActivity.class);
+        intent.putExtra(LCIMConstants.PEER_ID, userId);
+        startActivity(intent);
     }
 
     ///////////////////////////////////////////////////////////////////////////

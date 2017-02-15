@@ -7,6 +7,7 @@ import android.widget.ImageView;
 
 import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.MapView;
+import com.lulu.tuyou.model.TuYouUser;
 
 /**
  * Created by lulu on 2017/1/18.
@@ -43,4 +44,9 @@ public interface IMapView {
     // 使其滚回旧的位置
     ///////////////////////////////////////////////////////////////////////////
     void scrollToCurrentY();
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 跳转逻辑
+    ///////////////////////////////////////////////////////////////////////////
+    void jumpToConversationActivity(String userId);
 }

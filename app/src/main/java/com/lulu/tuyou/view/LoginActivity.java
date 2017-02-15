@@ -1,7 +1,6 @@
 package com.lulu.tuyou.view;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
@@ -12,11 +11,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.avos.avoscloud.im.v2.AVIMClient;
+import com.avos.avoscloud.im.v2.AVIMException;
+import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
 import com.lulu.tuyou.R;
 import com.lulu.tuyou.databinding.ActivityLoginBinding;
+import com.lulu.tuyou.model.TuYouUser;
 import com.lulu.tuyou.presenter.ILoginPresenter;
 import com.lulu.tuyou.presenter.LoginPresenterImpl;
 import com.lulu.tuyou.utils.Utils;
+
+import java.util.logging.Logger;
+
+import cn.leancloud.chatkit.LCChatKit;
 
 public class LoginActivity extends AppCompatActivity implements ILoginView, View.OnClickListener {
 
@@ -76,11 +83,22 @@ public class LoginActivity extends AppCompatActivity implements ILoginView, View
     }
 
     @Override
-    public void onLoginResult(boolean isSuccess, int code) {
+    public void onLoginResult(boolean isSuccess, TuYouUser user, int code) {
         if (isSuccess) {
-            Toast.makeText(this, R.string.login_success, Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(this, TuYouActivity.class));
-            finish();
+            LCChatKit.getInstance().open(user.getObjectId(), new AVIMClientCallback() {
+                @Override
+                public void done(AVIMClient client, AVIMException e) {
+                    if (e == null) {
+                        //Kit登录成功
+                        Toast.makeText(LoginActivity.this, R.string.login_success, Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(LoginActivity.this, TuYouActivity.class));
+                        finish();
+                    } else {
+                        Toast.makeText(LoginActivity.this, "即时通讯出了问题", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
         } else {
             Toast.makeText(this, getString(R.string.login_failed) + code, Toast.LENGTH_SHORT).show();
         }

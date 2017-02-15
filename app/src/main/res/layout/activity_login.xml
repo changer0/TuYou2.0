@@ -12,26 +12,12 @@
         android:background="@color/colorApp4"
         android:orientation="vertical">
 
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/login_app_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark">
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/login_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?actionBarSize"
-                />
-
-        </android.support.design.widget.AppBarLayout>
 
         <!--登录界面-->
         <LinearLayout
             android:id="@+id/login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/login_app_bar"
             android:orientation="vertical">
 
 

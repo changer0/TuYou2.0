@@ -96,7 +96,7 @@ public class MapAdapter extends RecyclerView.Adapter<MapAdapter.MyHolder> implem
 
     //添加数据
     public void add(TuYouUser user, boolean isScrolling) {
-        Log.d("lulu", "MapAdapter-add  是否正在滚动：" + isScrolling );
+        //Log.d("lulu", "MapAdapter-add  是否正在滚动：" + isScrolling );
         if (!isScrolling) {
             mList.add(user);
             Collections.sort(mList);

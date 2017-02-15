@@ -2,6 +2,7 @@ package com.lulu.tuyou.view;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,9 +19,15 @@ import com.lulu.tuyou.common.Constant;
 import com.lulu.tuyou.databinding.ActivityTuYouBinding;
 import com.lulu.tuyou.databinding.NavigationContentBinding;
 import com.lulu.tuyou.databinding.NavigationHeaderBinding;
+import com.lulu.tuyou.model.CustomUserProvider;
 import com.lulu.tuyou.model.TuYouUser;
 
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
+import cn.leancloud.chatkit.LCChatKit;
+import cn.leancloud.chatkit.LCChatKitUser;
+import cn.leancloud.chatkit.activity.LCIMConversationFragment;
+import cn.leancloud.chatkit.activity.LCIMConversationListFragment;
 
 
 /**
@@ -28,7 +35,7 @@ import cn.bmob.v3.BmobUser;
  * 这个Activity本身不需要Presenter
  */
 public class TuYouActivity extends AppCompatActivity implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
-    private MessageFragment mMessageFragment;
+    private LCIMConversationListFragment mMessageFragment;
     private MapFragment mMapFragment;
     private CircleFragment mCircleFragment;
     private Fragment currentFragment; //当前的Fragment
@@ -39,7 +46,7 @@ public class TuYouActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("lulu", "TuYouActivity-onCreate  执行");
+        //Log.d("lulu", "TuYouActivity-onCreate  执行");
         ActivityTuYouBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_tu_you);
         mManager = getSupportFragmentManager();
         mCurrentUser = Constant.currentUser;
@@ -48,10 +55,20 @@ public class TuYouActivity extends AppCompatActivity implements View.OnClickList
         initView(binding);
         //进入时手动点击 消息 的Fragment(暂时没有什么好的办法来解决这个问题)
         if (savedInstanceState == null) {
+            clickMapFragment();
             mRadioBtn.check(R.id.main_rb_msg);
         }
 
+        //添加本身到KitUser上
+        addToCurrentUserToKit();
+    }
 
+    private void addToCurrentUserToKit() {
+        CustomUserProvider.getPartUsers().add(
+                new LCChatKitUser(mCurrentUser.getObjectId(),
+                        mCurrentUser.getNickName(),
+                        mCurrentUser.getIcon()
+                ));
     }
 
     private void initView(ActivityTuYouBinding binding) {
@@ -99,13 +116,14 @@ public class TuYouActivity extends AppCompatActivity implements View.OnClickList
     ///////////////////////////////////////////////////////////////////////////
     private void loginOut() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("您确定要登出吗？点击确定将退出应用！")
+        builder.setMessage("您确定要登出吗？点击确定将返回登录页面！")
                 .setTitle("警告")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface anInterface, int i) {
                         BmobUser.logOut();
-                        finishAffinity();
+                        startActivity(new Intent(TuYouActivity.this, LoginActivity.class));
+                        finish();
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
@@ -144,11 +162,11 @@ public class TuYouActivity extends AppCompatActivity implements View.OnClickList
 
     public void clickMessageFragment() {
         if (mMessageFragment == null) {
-            mMessageFragment = MessageFragment.newInstance();
+            mMessageFragment = new LCIMConversationListFragment();
         }
 
         addOrShowFragment(mMessageFragment, mManager.beginTransaction());
-        Log.d("lulu", "TuYouPresenterImpl-clickMessageFragment  name： " + currentFragment.getClass().getName());
+        //Log.d("lulu", "TuYouPresenterImpl-clickMessageFragment  name： " + currentFragment.getClass().getName());
     }
 
     public void clickMapFragment() {

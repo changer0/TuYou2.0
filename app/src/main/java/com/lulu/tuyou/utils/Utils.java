@@ -5,16 +5,52 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.Window;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVInstallation;
+import com.avos.avoscloud.SaveCallback;
 import com.lulu.tuyou.R;
 import com.lulu.tuyou.common.Constant;
+import com.lulu.tuyou.model.TuYouUser;
+
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.UpdateListener;
 
 /**
  * Created by lulu on 2017/1/17.
  */
 
 public class Utils {
+    ///////////////////////////////////////////////////////////////////////////
+    // push 用于保存ID
+    ///////////////////////////////////////////////////////////////////////////
+    public static void saveInstallationId(final TuYouUser user) {
+        // TODO: 2017/2/15 push用 一会儿需要修改
+        AVInstallation.getCurrentInstallation().saveInBackground(new SaveCallback() {
+            @Override
+            public void done(AVException e) {
+                if (e == null) {
+                    // 保存成功
+                    String installationId = AVInstallation.getCurrentInstallation().getInstallationId();
+                    // 关联  installationId 到用户表等操作
+                    user.setInstallationId(installationId);
+                    user.update(new UpdateListener() {
+                        @Override
+                        public void done(BmobException e) {
+                            if (e != null) {
+                                Log.d("lulu", "SplashActivity-done  保存失败" + e.getMessage());
+                            }
+                        }
+                    });
+                } else {
+                    Log.d("lulu", "SplashActivity-done  保存installationId失败：" + e.getMessage());
+                }
+            }
+        });
+    }
+
     /**
      * 沉浸式状态栏，
      *

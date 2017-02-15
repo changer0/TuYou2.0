@@ -16,7 +16,10 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <!-- 允许程序访问CellID或WiFi热点来获取粗略的位置 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <application
         android:name=".TuYouApp"
         android:allowBackup="true"
@@ -24,6 +27,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <!-- 高德地图服务 -->
         <service android:name="com.amap.api.location.APSService"/>
         <!-- 高德地图的APPkey -->
@@ -35,6 +39,9 @@
         <!-- 实时通信模块、推送都要使用 PushService -->
         <service android:name="com.avos.avoscloud.PushService"/>
 
+        <!-- push用 -->
+        <service android:name="com.avos.avoscloud.PushService"/>
+
         <receiver android:name="com.avos.avoscloud.AVBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
@@ -42,6 +49,7 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
         </receiver>
+
         <!-- 实时通信模块、推送 END -->
 
         <activity android:name=".MainActivity">
@@ -49,12 +57,11 @@
         <activity
             android:name=".view.LoginActivity"
             android:screenOrientation="portrait">
-
         </activity>
         <activity
             android:name=".view.TuYouActivity"
-            android:theme="@style/TuYouActivityTheme"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/TuYouActivityTheme">
 
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN"/> -->
@@ -63,8 +70,9 @@
             <!-- <category android:name="android.intent.category.LAUNCHER"/> -->
             <!-- </intent-filter> -->
         </activity>
-
-        <activity android:name=".view.SplashActivity">
+        <activity
+            android:name=".view.SplashActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -74,6 +82,16 @@
         <activity android:name=".view.RegisterActivity">
         </activity>
 
+        <receiver
+            android:name=".receiver.HiReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="com.avos.UPDATE_STATUS" />
+                <action android:name="com.tuyou.push"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

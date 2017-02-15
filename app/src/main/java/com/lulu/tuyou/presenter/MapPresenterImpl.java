@@ -16,7 +16,6 @@ import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.CameraUpdate;
 import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.LocationSource;
-import com.amap.api.maps2d.UiSettings;
 import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.CameraPosition;
 import com.amap.api.maps2d.model.LatLng;
@@ -28,11 +27,28 @@ import com.amap.api.services.nearby.NearbySearch;
 import com.amap.api.services.nearby.NearbySearchFunctionType;
 import com.amap.api.services.nearby.NearbySearchResult;
 import com.amap.api.services.nearby.UploadInfo;
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVInstallation;
+import com.avos.avoscloud.AVPush;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.PushService;
+import com.avos.avoscloud.SendCallback;
+import com.avos.avoscloud.im.v2.AVIMClient;
+import com.avos.avoscloud.im.v2.AVIMException;
+import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
+
 import com.lulu.tuyou.R;
 import com.lulu.tuyou.adapter.MapAdapter;
 import com.lulu.tuyou.common.Constant;
+import com.lulu.tuyou.model.CustomUserProvider;
+import com.lulu.tuyou.model.TuYouRelation;
 import com.lulu.tuyou.model.TuYouUser;
+import com.lulu.tuyou.utils.Utils;
 import com.lulu.tuyou.view.IMapView;
+import com.lulu.tuyou.view.TuYouActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,7 +59,12 @@ import java.util.Vector;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
+import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UpdateListener;
+import cn.leancloud.chatkit.LCChatKit;
+import cn.leancloud.chatkit.LCChatKitUser;
 
 /**
  * Created by lulu on 2017/1/18.
@@ -205,6 +226,7 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
     public static boolean isHaveFriends = false;//附近是否有图友
     private Map<String, TuYouUser> mOldUserHashMap = new HashMap<>();
     private Map<String, LatLonPoint> mOldPoint = new HashMap<>();
+    private Map<String, LCChatKitUser> mKitUserMap = new HashMap<>();
 
     @Override
     public void onUserInfoCleared(int i) {
@@ -227,7 +249,7 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
                 //先将数据清空
                 mAdapter.clearAllNoRefresh();
                 //需要将现有List集合转为线程安全的
-                Log.d("lulu", "MapPresenterImpl-onNearbyInfoSearched  list:" + list.size());
+                //Log.d("lulu", "MapPresenterImpl-onNearbyInfoSearched  list:" + list.size());
                 List<NearbyInfo> listSafe = Collections.synchronizedList(list);
                 for (int i = 0; i < listSafe.size(); i++) {
                     final NearbyInfo info = listSafe.get(i);
@@ -243,67 +265,31 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
                         }
                         continue;
                     }
+
+
                     MapPresenterImpl.isHaveFriends = true;
                     final LatLonPoint point = info.getPoint();
                     LatLonPoint oldPoint = mOldPoint.get(userID);
                     if (oldPoint != null) {
                         double oldLat = oldPoint.getLatitude();
                         double oldLon = oldPoint.getLongitude();
-                        Log.d("lulu", "MapPresenterImpl-onNearbyInfoSearched  lat:" + point.getLatitude());
-                        Log.d("lulu", "MapPresenterImpl-onNearbyInfoSearched  lon:" + point.getLongitude());
-                        Log.d("lulu", "MapPresenterImpl-onNearbyInfoSearched  oldlat:" + oldLat);
-                        Log.d("lulu", "MapPresenterImpl-onNearbyInfoSearched  oldlon:" + oldLon);
                         //这是一步优化处理，当经纬度都大于1'之后才进行更新
                         if (Math.abs(oldLat - point.getLatitude()) < (1 / 60.0) && Math.abs(oldLon - point.getLongitude()) < (1 / 60.0)) {
-                            Log.d("lulu", "MapPresenterImpl-onNearbyInfoSearched  执行了优化逻辑");
+                            //Log.d("lulu", "MapPresenterImpl-onNearbyInfoSearched  执行了优化逻辑");
                             //此时还是需要把这个用户标记在上面
-                            LatLng latLng = new LatLng(point.getLatitude(), point.getLongitude());
-                            MarkerOptions options = new MarkerOptions();
-                            options.position(latLng)
-                                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_other_mark))
-                                    .draggable(false);
-                            Marker marker = mAMap.addMarker(options);
-                            mOtherMakers.add(marker);
-
-                            TuYouUser user = mOldUserHashMap.get(userID);
-                            if (user != null) {
-                                synchronized (MapPresenterImpl.class) {
-                                    Log.d("lulu", "MapPresenterImpl-onNearbyInfoSearched  添加了");
-                                    user.setDistance(distance);
-                                    mAdapter.add(user, mMapFragmentView.onGetIsUserScolling());
-                                    mMapFragmentView.scrollToCurrentY();
-                                }
-                            }
-
+                            addOlderPointToMap(distance, userID, oldPoint);
                             continue;
                         }
                     }
                     //更新旧坐标
                     mOldPoint.put(userID, point);
-
                     //根据用户ID查找
                     BmobQuery<TuYouUser> query = new BmobQuery<>();
                     query.getObject(userID, new QueryListener<TuYouUser>() {
                         @Override
                         public void done(TuYouUser user, BmobException e) {
                             if (e == null) {
-
-                                LatLng latLng = new LatLng(point.getLatitude(), point.getLongitude());
-                                MarkerOptions options = new MarkerOptions();
-                                options.position(latLng)
-                                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_other_mark))
-                                        .draggable(false);
-                                Marker marker = mAMap.addMarker(options);
-                                mOtherMakers.add(marker);
-                                synchronized (MapPresenterImpl.class) {
-                                    mOldUserHashMap.put(userID, user);
-                                    Log.d("lulu", "MapPresenterImpl-done  添加数据");
-                                    user.setDistance(distance);
-                                    mAdapter.add(user, mMapFragmentView.onGetIsUserScolling());
-                                    mMapFragmentView.scrollToCurrentY();
-                                    Log.d("lulu", "MapPresenterImpl-done  userName" + user.getNickName());
-                                }
-
+                                addNewPointToMap(user, point, userID, distance);
                             } else {
                                 Log.d("lulu", "MapPresenterImpl " + e.getMessage());
                             }
@@ -312,7 +298,6 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
 
                 }
 
-
             } else {
                 Toast.makeText(mContext, R.string.map_no_friends, Toast.LENGTH_SHORT).show();
                 MapPresenterImpl.isHaveFriends = false;
@@ -320,6 +305,74 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
             }
         } else {
             Log.d("lulu", "MapPresenterImpl-onNearbyInfoSearched  出现异常异常码： " + resultCode);
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    //添加KitUser
+    ///////////////////////////////////////////////////////////////////////////
+    public void addKitUsers(String userID, String username, String img) {
+        LCChatKitUser kitUser = mKitUserMap.get(userID);
+        if (kitUser == null) {
+            //Log.d("lulu", "MapPresenterImpl-addKitUsers  img：" + img);
+            LCChatKitUser e = new LCChatKitUser(userID, username, img);
+            CustomUserProvider.getPartUsers().add(e);
+            mKitUserMap.put(userID, e);
+        } else {
+
+            Log.d("lulu", "MapPresenterImpl-addKitUsers  kitUser" + kitUser.getUserName());
+            //只有在两者都不相等才会调用
+            if (!img.equals(kitUser.getAvatarUrl()) || !username.equals(kitUser.getUserName())) {
+                LCChatKitUser e = new LCChatKitUser(userID, username, img);
+                CustomUserProvider.getPartUsers().add(e);
+                mKitUserMap.put(userID, e);
+            }
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 添加新的point到地图上
+    ///////////////////////////////////////////////////////////////////////////
+    private void addNewPointToMap(TuYouUser user, LatLonPoint point, String userID, int distance) {
+        LatLng latLng = new LatLng(point.getLatitude(), point.getLongitude());
+        MarkerOptions options = new MarkerOptions();
+        options.position(latLng)
+                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_other_mark))
+                .draggable(false);
+        Marker marker = mAMap.addMarker(options);
+        mOtherMakers.add(marker);
+        synchronized (MapPresenterImpl.class) {
+            mOldUserHashMap.put(userID, user);
+            //添加到kitUser中
+            addKitUsers(user.getObjectId(), user.getNickName(), user.getIcon());
+            Log.d("lulu", "MapPresenterImpl-done  添加数据");
+            user.setDistance(distance);
+            mAdapter.add(user, mMapFragmentView.onGetIsUserScolling());
+            mMapFragmentView.scrollToCurrentY();
+            //Log.d("lulu", "MapPresenterImpl-done  userName" + user.getNickName());
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 将旧的点添加到地图上
+    ///////////////////////////////////////////////////////////////////////////
+    private void addOlderPointToMap(int distance, String userID, LatLonPoint point) {
+        LatLng latLng = new LatLng(point.getLatitude(), point.getLongitude());
+        MarkerOptions options = new MarkerOptions();
+        options.position(latLng)
+                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_other_mark))
+                .draggable(false);
+        Marker marker = mAMap.addMarker(options);
+        mOtherMakers.add(marker);
+
+        TuYouUser user = mOldUserHashMap.get(userID);
+        if (user != null) {
+            synchronized (MapPresenterImpl.class) {
+                addKitUsers(user.getObjectId(), user.getNickName(), user.getIcon());
+                user.setDistance(distance);
+                mAdapter.add(user, mMapFragmentView.onGetIsUserScolling());
+                mMapFragmentView.scrollToCurrentY();
+            }
         }
     }
 
@@ -424,13 +477,102 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
         }
         switch (view.getId()) {
             case R.id.map_item_attention:
-                if (user != null) {
-                    Toast.makeText(mContext, "点击了Attention" + user.getNickName(), Toast.LENGTH_SHORT).show();
-                }
+                Toast.makeText(mContext, "点击了", Toast.LENGTH_SHORT).show();
+//                //先让其不可点击
+//                //view.setClickable(false);
+//                if (user != null && view instanceof ImageView) {
+//                    final ImageView imageView = (ImageView) view;
+//                    BmobQuery<TuYouRelation> query = new BmobQuery<>();
+//                    query.addWhereEqualTo("fromUser", Constant.currentUser.getObjectId());
+//                    query.addWhereEqualTo("toUser", user.getObjectId());
+//                    final TuYouUser finalUser = user;
+//                    query.findObjects(new FindListener<TuYouRelation>() {
+//                        @Override
+//                        public void done(List<TuYouRelation> list, BmobException e) {
+//                            if (e == null) {
+//                                if (list != null && list.size() > 0) {
+//                                    //关注了，取消关注
+//                                    TuYouRelation relation = list.get(0);
+//                                    relation.delete(new UpdateListener() {
+//                                        @Override
+//                                        public void done(BmobException e) {
+//                                            if (e == null) {
+//                                                imageView.setImageResource(R.mipmap.ic_no_attention);
+//                                                Toast.makeText(mContext, "取消关注成功", Toast.LENGTH_SHORT).show();
+//                                            } else {
+//                                                Toast.makeText(mContext, "出了点问题" + e.getMessage(), Toast.LENGTH_SHORT).show();
+//                                            }
+//                                        }
+//                                    });
+//                                } else {
+//                                    //没有关注，关注
+//                                    TuYouRelation relation = new TuYouRelation();
+//                                    relation.setFromUser(mCurrentUser);
+//                                    relation.setToUser(finalUser);
+//                                    relation.save(new SaveListener<String>() {
+//                                        @Override
+//                                        public void done(String s, BmobException e) {
+//                                            if (e == null) {
+//                                                Toast.makeText(mContext, "关注成功", Toast.LENGTH_SHORT).show();
+//                                                imageView.setImageResource(R.mipmap.ic_attention);
+//                                            } else {
+//                                                Toast.makeText(mContext, "出了点问题" + e.getMessage(), Toast.LENGTH_SHORT).show();
+//                                            }
+//                                        }
+//                                    });
+//                                }
+//                            } else {
+//                                Log.d("lulu", "done: MapFriendsAdapter有问题" + e.getMessage());
+//                            }
+//                            imageView.setClickable(true);
+//                        }
+//                    });
+//                }
                 break;
             case R.id.map_item_hi:
                 if (user != null) {
-                    Toast.makeText(mContext, "点击了Hi" + user.getNickName(), Toast.LENGTH_SHORT).show();
+                    final TuYouUser tempUser = user;
+//                    LCChatKit.getInstance().open(mCurrentUser.getObjectId(), new AVIMClientCallback() {
+//                        @Override
+//                        public void done(AVIMClient client, AVIMException e) {
+//                            if (e == null) {
+//                                mMapFragmentView.jumpToConversationActivity(tempUser.getObjectId());
+//                            } else {
+//                                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+//                            }
+//                        }
+//                    });
+                    try {
+                        AVPush push = new AVPush();
+                        AVQuery pushQuery = AVInstallation.getQuery();
+                        // 假设 THE_INSTALLATION_ID 是保存在用户表里的 installationId，
+                        // 可以在应用启动的时候获取并保存到用户表
+                        Log.d("lulu", "MapPresenterImpl-onChildClick  user的push id：" + user.getInstallationId());
+                        pushQuery.whereEqualTo("installationId", user.getInstallationId());
+                        // 订阅频道，当该频道消息到来的时候，打开对应的 Activity
+                        PushService.subscribe(mContext, "public", TuYouActivity.class);
+                        push.setQuery(pushQuery);
+                        push.setChannel("public");
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("action", "com.tuyou.push");
+                        jsonObject.put("msg", "这是我发送的消息" + user.getObjectId());
+                        push.setData(jsonObject);
+                        push.setPushToAndroid(true);
+                        push.sendInBackground(new SendCallback() {
+                            @Override
+                            public void done(AVException e) {
+                                if (e == null) {
+                                    Toast.makeText(mContext, "推送成功", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(mContext, "推送异常：" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                 }
                 break;
         }

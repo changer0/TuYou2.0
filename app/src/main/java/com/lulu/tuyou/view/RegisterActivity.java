@@ -10,11 +10,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.avos.avoscloud.im.v2.AVIMClient;
+import com.avos.avoscloud.im.v2.AVIMException;
+import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
 import com.lulu.tuyou.R;
 import com.lulu.tuyou.databinding.ActivityRegisterBinding;
+import com.lulu.tuyou.model.TuYouUser;
 import com.lulu.tuyou.presenter.IRegisterPresenter;
 import com.lulu.tuyou.presenter.RegisterPresenterImpl;
 import com.lulu.tuyou.utils.Utils;
+
+import cn.leancloud.chatkit.LCChatKit;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener, IRegisterView {
     private IRegisterPresenter mPresenter;
@@ -64,11 +70,23 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     // 处理注册完毕之后的逻辑
     ///////////////////////////////////////////////////////////////////////////
     @Override
-    public void onResult(boolean isSuccess, int resultCode) {
+    public void onResult(boolean isSuccess, final TuYouUser user, int resultCode) {
         if (isSuccess) {
-            Toast.makeText(this, "注册成功", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(this, TuYouActivity.class));
-            finish();
+
+            LCChatKit.getInstance().open(user.getObjectId(), new AVIMClientCallback() {
+                @Override
+                public void done(AVIMClient client, AVIMException e) {
+                    if (e == null) {
+                        Utils.saveInstallationId(user);
+                        //Kit登录成功
+                        Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(RegisterActivity.this, TuYouActivity.class));
+                        finish();
+                    } else {
+                        Toast.makeText(RegisterActivity.this, "即时通讯出了问题", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         } else {
             Toast.makeText(this, "注册异常" + resultCode, Toast.LENGTH_SHORT).show();
         }

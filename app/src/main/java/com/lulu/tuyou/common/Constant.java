@@ -18,4 +18,10 @@ public class Constant {
     public static final String SEX_BOY = "boy";
     public static final String SEX_GIRL = "girl";
 
+    public static final String ATTENTION_TYPE_FRIENDS = "isFriends";
+
+    public static final String PUSH_HI_ID = "hi_id";
+    public static final String PUSH_HI_STATE = "hi_state";
+
+
 }

@@ -46,9 +46,9 @@ public class RegisterPresenterImpl implements IRegisterPresenter {
                 if (e == null) {
                     //注册成功后
                     Constant.currentUser = user;
-                    mRegisterView.onResult(true, 0);
+                    mRegisterView.onResult(true, user, 0);
                 } else {
-                    mRegisterView.onResult(false, e.getErrorCode());
+                    mRegisterView.onResult(false, user, e.getErrorCode());
                 }
             }
         });
