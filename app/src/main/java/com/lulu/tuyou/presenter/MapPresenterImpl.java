@@ -1,11 +1,14 @@
 package com.lulu.tuyou.presenter;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
@@ -477,104 +480,80 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
         }
         switch (view.getId()) {
             case R.id.map_item_attention:
-                Toast.makeText(mContext, "点击了", Toast.LENGTH_SHORT).show();
-//                //先让其不可点击
-//                //view.setClickable(false);
-//                if (user != null && view instanceof ImageView) {
-//                    final ImageView imageView = (ImageView) view;
-//                    BmobQuery<TuYouRelation> query = new BmobQuery<>();
-//                    query.addWhereEqualTo("fromUser", Constant.currentUser.getObjectId());
-//                    query.addWhereEqualTo("toUser", user.getObjectId());
-//                    final TuYouUser finalUser = user;
-//                    query.findObjects(new FindListener<TuYouRelation>() {
-//                        @Override
-//                        public void done(List<TuYouRelation> list, BmobException e) {
-//                            if (e == null) {
-//                                if (list != null && list.size() > 0) {
-//                                    //关注了，取消关注
-//                                    TuYouRelation relation = list.get(0);
-//                                    relation.delete(new UpdateListener() {
-//                                        @Override
-//                                        public void done(BmobException e) {
-//                                            if (e == null) {
-//                                                imageView.setImageResource(R.mipmap.ic_no_attention);
-//                                                Toast.makeText(mContext, "取消关注成功", Toast.LENGTH_SHORT).show();
-//                                            } else {
-//                                                Toast.makeText(mContext, "出了点问题" + e.getMessage(), Toast.LENGTH_SHORT).show();
-//                                            }
-//                                        }
-//                                    });
-//                                } else {
-//                                    //没有关注，关注
-//                                    TuYouRelation relation = new TuYouRelation();
-//                                    relation.setFromUser(mCurrentUser);
-//                                    relation.setToUser(finalUser);
-//                                    relation.save(new SaveListener<String>() {
-//                                        @Override
-//                                        public void done(String s, BmobException e) {
-//                                            if (e == null) {
-//                                                Toast.makeText(mContext, "关注成功", Toast.LENGTH_SHORT).show();
-//                                                imageView.setImageResource(R.mipmap.ic_attention);
-//                                            } else {
-//                                                Toast.makeText(mContext, "出了点问题" + e.getMessage(), Toast.LENGTH_SHORT).show();
-//                                            }
-//                                        }
-//                                    });
-//                                }
-//                            } else {
-//                                Log.d("lulu", "done: MapFriendsAdapter有问题" + e.getMessage());
-//                            }
-//                            imageView.setClickable(true);
-//                        }
-//                    });
-//                }
+                //先让其不可点击
+                view.setClickable(false);
+                if (user != null && view instanceof ImageView) {
+                    final ImageView imageView = (ImageView) view;
+                    BmobQuery<TuYouRelation> query = new BmobQuery<>();
+                    query.addWhereEqualTo("fromUser", Constant.currentUser.getObjectId());
+                    query.addWhereEqualTo("toUser", user.getObjectId());
+                    final TuYouUser finalUser = user;
+
+                    query.findObjects(new FindListener<TuYouRelation>() {
+                        @Override
+                        public void done(List<TuYouRelation> list, BmobException e) {
+                            if (e == null) {
+                                if (list != null && list.size() > 0) {
+                                    //关注了，取消关注
+                                    TuYouRelation relation = list.get(0);
+                                    relation.delete(new UpdateListener() {
+                                        @Override
+                                        public void done(BmobException e) {
+                                            if (e == null) {
+                                                imageView.setImageResource(R.mipmap.ic_no_attention);
+                                                Toast.makeText(mContext, "取消关注成功", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(mContext, "出了点问题" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    relationToUser(finalUser, imageView);
+                                }
+                            } else {
+
+                                relationToUser(finalUser, imageView);
+                                Log.d("lulu", "done: MapFriendsAdapter有问题" + e.getMessage());
+                            }
+                            imageView.setClickable(true);
+                        }
+                    });
+                }
                 break;
             case R.id.map_item_hi:
                 if (user != null) {
-                    final TuYouUser tempUser = user;
-//                    LCChatKit.getInstance().open(mCurrentUser.getObjectId(), new AVIMClientCallback() {
-//                        @Override
-//                        public void done(AVIMClient client, AVIMException e) {
-//                            if (e == null) {
-//                                mMapFragmentView.jumpToConversationActivity(tempUser.getObjectId());
-//                            } else {
-//                                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
-//                            }
-//                        }
-//                    });
-                    try {
-                        AVPush push = new AVPush();
-                        AVQuery pushQuery = AVInstallation.getQuery();
-                        // 假设 THE_INSTALLATION_ID 是保存在用户表里的 installationId，
-                        // 可以在应用启动的时候获取并保存到用户表
-                        Log.d("lulu", "MapPresenterImpl-onChildClick  user的push id：" + user.getInstallationId());
-                        pushQuery.whereEqualTo("installationId", user.getInstallationId());
-                        // 订阅频道，当该频道消息到来的时候，打开对应的 Activity
-                        PushService.subscribe(mContext, "public", TuYouActivity.class);
-                        push.setQuery(pushQuery);
-                        push.setChannel("public");
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("action", "com.tuyou.push");
-                        jsonObject.put("msg", "这是我发送的消息" + user.getObjectId());
-                        push.setData(jsonObject);
-                        push.setPushToAndroid(true);
-                        push.sendInBackground(new SendCallback() {
-                            @Override
-                            public void done(AVException e) {
-                                if (e == null) {
-                                    Toast.makeText(mContext, "推送成功", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(mContext, "推送异常：" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    Utils.pushHiData(mContext, user.getInstallationId(), Constant.PUSH_HI_ACTION_REQUEST, null, mCurrentUser.getObjectId(), new SendCallback() {
+                        @Override
+                        public void done(AVException e) {
+                            if (e == null) {
+                                Toast.makeText(mContext, "正在请求", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
 
                 }
                 break;
         }
+    }
+
+    private void relationToUser(TuYouUser finalUser, final ImageView imageView) {
+        //没有关注，关注
+        TuYouRelation relation = new TuYouRelation();
+        relation.setFromUser(mCurrentUser);
+        relation.setToUser(finalUser);
+        relation.save(new SaveListener<String>() {
+            @Override
+            public void done(String s, BmobException e) {
+                if (e == null) {
+                    Toast.makeText(mContext, "关注成功", Toast.LENGTH_SHORT).show();
+                    imageView.setImageResource(R.mipmap.ic_attention);
+                } else {
+                    Toast.makeText(mContext, "出了点问题" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 }

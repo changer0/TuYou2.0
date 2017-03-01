@@ -17,9 +17,11 @@
     <!-- 允许程序访问CellID或WiFi热点来获取粗略的位置 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <!-- 在Receiver中弹出Dialog的权限 -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.VIBRATE" />
     <application
         android:name=".TuYouApp"
         android:allowBackup="true"
@@ -82,16 +84,19 @@
         <activity android:name=".view.RegisterActivity">
         </activity>
 
-        <receiver
-            android:name=".receiver.HiReceiver">
+        <receiver android:name=".receiver.HiReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.USER_PRESENT" />
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-                <action android:name="com.avos.UPDATE_STATUS" />
-                <action android:name="com.tuyou.push"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.USER_PRESENT"/>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+                <action android:name="com.avos.UPDATE_STATUS"/>
+                <action android:name="com.tuyou.push.request"/>
+                <action android:name="com.tuyou.push.response"/>
             </intent-filter>
         </receiver>
+
+        <activity android:name=".view.RelationActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -12,7 +12,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.SendCallback;
+import com.avos.avoscloud.im.v2.AVIMClient;
+import com.avos.avoscloud.im.v2.AVIMException;
+import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
 import com.bumptech.glide.Glide;
 import com.lulu.tuyou.R;
 import com.lulu.tuyou.common.Constant;
@@ -21,6 +27,7 @@ import com.lulu.tuyou.databinding.NavigationContentBinding;
 import com.lulu.tuyou.databinding.NavigationHeaderBinding;
 import com.lulu.tuyou.model.CustomUserProvider;
 import com.lulu.tuyou.model.TuYouUser;
+import com.lulu.tuyou.utils.Utils;
 
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
@@ -122,6 +129,8 @@ public class TuYouActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onClick(DialogInterface anInterface, int i) {
                         BmobUser.logOut();
+                        //删除Push中的Id
+                        Utils.removeInstallationId();
                         startActivity(new Intent(TuYouActivity.this, LoginActivity.class));
                         finish();
                     }
@@ -181,5 +190,19 @@ public class TuYouActivity extends AppCompatActivity implements View.OnClickList
             mCircleFragment = CircleFragment.newInstance();
         }
         addOrShowFragment(mCircleFragment, mManager.beginTransaction());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+//        String action = intent.getAction();
+//        final TuYouUser user = (TuYouUser) intent.getSerializableExtra(Constant.PUSH_HI_START_ACTIVITY_USER);
+//        if (user != null) {
+//            if (Constant.PUSH_HI_START_ACTIVITY_ACTION.equals(action)) {
+//
+//
+//            }
+//        }
+
     }
 }

@@ -4,25 +4,106 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Window;
+import android.widget.Toast;
 
+import com.alibaba.fastjson.JSONObject;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVInstallation;
+import com.avos.avoscloud.AVPush;
+import com.avos.avoscloud.AVQuery;
+import com.avos.avoscloud.PushService;
 import com.avos.avoscloud.SaveCallback;
+import com.avos.avoscloud.SendCallback;
 import com.lulu.tuyou.R;
 import com.lulu.tuyou.common.Constant;
 import com.lulu.tuyou.model.TuYouUser;
+import com.lulu.tuyou.view.TuYouActivity;
 
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.UpdateListener;
+import cn.leancloud.chatkit.activity.LCIMConversationActivity;
+import cn.leancloud.chatkit.utils.LCIMConstants;
 
 /**
  * Created by lulu on 2017/1/17.
  */
 
 public class Utils {
+
+    /**
+     * 跳转到聊天界面
+     * @param context 上下文
+     * @param userId 对方用户ID
+     */
+    public static void jumpToChatUINewTask(Context context, String userId) {
+        Intent intent = new Intent(context, LCIMConversationActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(LCIMConstants.PEER_ID, userId);
+        context.startActivity(intent);
+    }
+
+    /**
+     * 推送
+     * @param context
+     * @param peerInstallationId
+     * @param action
+     * @param state
+     * @param userId
+     * @param sendCallback
+     */
+    public static void pushHiData(Context context, String peerInstallationId, String action, String state, String userId, SendCallback sendCallback) {
+        AVPush push = new AVPush();
+        AVQuery pushQuery = AVInstallation.getQuery();
+        // 假设 THE_INSTALLATION_ID 是保存在用户表里的 installationId，
+        // 可以在应用启动的时候获取并保存到用户表
+        Log.d("lulu", "MapPresenterImpl-onChildClick  user的push id：" + peerInstallationId);
+        pushQuery.whereEqualTo("installationId", peerInstallationId);
+        // 订阅频道，当该频道消息到来的时候，打开对应的 Activity
+        PushService.subscribe(context, Constant.PUSH_HI_CHANNEL, TuYouActivity.class);
+        push.setQuery(pushQuery);
+        push.setChannel(Constant.PUSH_HI_CHANNEL);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(Constant.PUSH_HI_ACTION, action);
+        if (!TextUtils.isEmpty(state)){
+            jsonObject.put(Constant.PUSH_HI_STATE, state);
+        }
+        if (!TextUtils.isEmpty(userId)){
+            jsonObject.put(Constant.PUSH_HI_USER_ID, userId);
+        }
+
+        push.setData(jsonObject);
+        push.setPushToAndroid(true);
+        push.sendInBackground(sendCallback);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 用于登出时删除保存的Push用的InstallionId
+    ///////////////////////////////////////////////////////////////////////////
+    public static void removeInstallationId() {
+        final AVInstallation installation = AVInstallation.getCurrentInstallation();
+        String id = installation.getInstallationId();
+        if (id != null) {
+            installation.remove(id);
+            installation.deleteInBackground();
+        }
+        //清空我的InstallId
+        TuYouUser currentUser = Constant.currentUser;
+        currentUser.setInstallationId("");
+        currentUser.update(new UpdateListener() {
+            @Override
+            public void done(BmobException e) {
+                if (e != null) {
+                    Log.d("lulu", "Utils-done  出现问题：" + e.getMessage());
+                }
+            }
+        });
+
+    }
     ///////////////////////////////////////////////////////////////////////////
     // push 用于保存ID
     ///////////////////////////////////////////////////////////////////////////

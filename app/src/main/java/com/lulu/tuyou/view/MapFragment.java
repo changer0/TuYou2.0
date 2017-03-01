@@ -236,15 +236,6 @@ public class MapFragment extends Fragment implements IMapView, View.OnClickListe
         mNestedScrollView.scrollTo(mCurrentScrollX, mCurrentScrollY);
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // 跳转逻辑
-    ///////////////////////////////////////////////////////////////////////////
-    @Override
-    public void jumpToConversationActivity(String userId) {
-        Intent intent = new Intent(mContext, LCIMConversationActivity.class);
-        intent.putExtra(LCIMConstants.PEER_ID, userId);
-        startActivity(intent);
-    }
 
     ///////////////////////////////////////////////////////////////////////////
     // 生命周期方法

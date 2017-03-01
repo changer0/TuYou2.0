@@ -4,7 +4,6 @@ import com.lulu.tuyou.model.TuYouUser;
 
 /**
  * Created by lulu on 2017/1/19.
- *
  */
 public class Constant {
 
@@ -20,8 +19,17 @@ public class Constant {
 
     public static final String ATTENTION_TYPE_FRIENDS = "isFriends";
 
-    public static final String PUSH_HI_ID = "hi_id";
+    public static final String PUSH_HI_USER_ID = "hi_id";
     public static final String PUSH_HI_STATE = "hi_state";
+    public static final String PUSH_HI_STATE_AGREE = "agree";
+    public static final String PUSH_HI_STATE_DISAGREE = "disagree";
+    public static final String PUSH_HI_CHANNEL = "private";
+    public static final String PUSH_HI_ACTION_REQUEST = "com.tuyou.push.request";
+    public static final String PUSH_HI_ACTION_RESPONSE = "com.tuyou.push.response";
+    public static final String PUSH_HI_ACTION = "action";
+
+    public static final String PUSH_HI_START_ACTIVITY_ACTION = "com.tuyou.push.start.activity.action";
+    public static final String PUSH_HI_START_ACTIVITY_USER = "com.tuyou.push.start.activity.action.user";
 
 
 }
