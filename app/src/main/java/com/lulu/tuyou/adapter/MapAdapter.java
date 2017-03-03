@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.lulu.tuyou.R;
 import com.lulu.tuyou.common.Constant;
-import com.lulu.tuyou.databinding.MapItemBinding;
+import com.lulu.tuyou.databinding.ItemMapBinding;
 import com.lulu.tuyou.model.TuYouRelation;
 import com.lulu.tuyou.model.TuYouUser;
 import com.lulu.tuyou.view.GlideCircleTransform;
@@ -60,9 +60,9 @@ public class MapAdapter extends RecyclerView.Adapter<MapAdapter.MyHolder> implem
 
     @Override
     public MyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(mContext).inflate(R.layout.map_item, parent, false);
-        MapItemBinding binding = DataBindingUtil.bind(itemView);
-        MyHolder holder = new MyHolder(itemView);
+
+        ItemMapBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mContext), R.layout.item_map, parent, false);
+        MyHolder holder = new MyHolder(binding.getRoot());
         holder.initView(binding, this);
         return holder;
     }
@@ -143,14 +143,16 @@ public class MapAdapter extends RecyclerView.Adapter<MapAdapter.MyHolder> implem
         void onChildClick(View view);
     }
 
-    @Override
-    public void onClick(View view) {
-        mListener.onChildClick(view);
-    }
-
     ///////////////////////////////////////////////////////////////////////////
     // 事件回调
     ///////////////////////////////////////////////////////////////////////////
+    @Override
+    public void onClick(View view) {
+        if (mListener != null) {
+            mListener.onChildClick(view);
+        }
+    }
+
     static class MyHolder extends RecyclerView.ViewHolder {
         TextView mNickname;
         TextView mAge;
@@ -165,7 +167,7 @@ public class MapAdapter extends RecyclerView.Adapter<MapAdapter.MyHolder> implem
             super(itemView);
         }
 
-        private void initView(MapItemBinding binding, View.OnClickListener listener) {
+        private void initView(ItemMapBinding binding, View.OnClickListener listener) {
             //binding.getRoot().setOnClickListener(this);
             mNickname = binding.mapItemNickname;
             mAge = binding.mapItemAge;

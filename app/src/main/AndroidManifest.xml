@@ -72,6 +72,8 @@
             <!-- <category android:name="android.intent.category.LAUNCHER"/> -->
             <!-- </intent-filter> -->
         </activity>
+        <activity android:name=".view.AttentionActivity" android:screenOrientation="portrait" android:parentActivityName=".view.TuYouActivity">
+        </activity>
         <activity
             android:name=".view.SplashActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
@@ -95,8 +97,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".view.RelationActivity">
-        </activity>
+
     </application>
 
 </manifest>

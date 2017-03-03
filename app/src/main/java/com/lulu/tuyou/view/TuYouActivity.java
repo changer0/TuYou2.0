@@ -9,16 +9,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.avos.avoscloud.AVException;
-import com.avos.avoscloud.SendCallback;
-import com.avos.avoscloud.im.v2.AVIMClient;
-import com.avos.avoscloud.im.v2.AVIMException;
-import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
 import com.bumptech.glide.Glide;
 import com.lulu.tuyou.R;
 import com.lulu.tuyou.common.Constant;
@@ -29,11 +23,8 @@ import com.lulu.tuyou.model.CustomUserProvider;
 import com.lulu.tuyou.model.TuYouUser;
 import com.lulu.tuyou.utils.Utils;
 
-import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
-import cn.leancloud.chatkit.LCChatKit;
 import cn.leancloud.chatkit.LCChatKitUser;
-import cn.leancloud.chatkit.activity.LCIMConversationFragment;
 import cn.leancloud.chatkit.activity.LCIMConversationListFragment;
 
 
@@ -92,6 +83,8 @@ public class TuYouActivity extends AppCompatActivity implements View.OnClickList
                 .into(header.headerImg);
         header.headerUserName.setText(mCurrentUser.getNickName());
         content.navigationLogout.setOnClickListener(this);
+        content.itemNavigationAttention.setOnClickListener(this);
+        content.itemNavigationAbout.setOnClickListener(this);
     }
 
     @Override
@@ -114,6 +107,11 @@ public class TuYouActivity extends AppCompatActivity implements View.OnClickList
         switch (view.getId()) {
             case R.id.navigation_logout:
                 loginOut();
+                break;
+            case R.id.item_navigation_attention:
+                Toast.makeText(this, "点击了", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, AttentionActivity.class);
+                startActivity(intent);
                 break;
         }
     }

@@ -76,7 +76,6 @@ import cn.leancloud.chatkit.LCChatKitUser;
 public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, LocationSource, AMap.OnMapTouchListener,
         AMap.OnCameraChangeListener, AMap.OnMarkerClickListener, NearbySearch.NearbyListener, MapAdapter.OnChildListener {
     private IMapView mMapFragmentView;
-    private List<TuYouUser> mList;
     private Context mContext;
     private AMap mAMap;
     private Marker mMyMarker; //地图上“我”的点
@@ -463,8 +462,8 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
 
     @Override
     public void initRecycler(RecyclerView recyclerView) {
-        mList = new Vector<>();
-        mAdapter = new MapAdapter(mContext, mList);
+        List<TuYouUser> list = new Vector<>();
+        mAdapter = new MapAdapter(mContext, list);
         mAdapter.setListener(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(mAdapter);

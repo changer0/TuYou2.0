@@ -4,6 +4,11 @@
              android:layout_height="match_parent"
              tools:context="com.lulu.tuyou.view.CircleFragment">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/circle_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"/>
+
     <!-- TODO: Update blank fragment layout -->
     <TextView
         android:gravity="center"

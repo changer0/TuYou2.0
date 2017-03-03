@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
+    <!--坑啊，忘了设置height为wrap_content耽误了好一会儿啊-->
+    <android.support.v7.widget.CardView
+        android:id="@+id/attention_item_card"
+        style="@style/map_item_card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:foreground="?attr/selectableItemBackground"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/attention_item_icon"
+                android:layout_width="@dimen/img_width"
+                android:layout_height="@dimen/img_height"
+                android:layout_centerVertical="true"
+                tools:src="@mipmap/ic_app"/>
+
+            <TextView
+                android:id="@+id/attention_item_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/attention_item_icon"
+                android:layout_marginLeft="40dp"
+                android:layout_toRightOf="@id/attention_item_icon"
+                tools:text="用户名"/>
+
+            <ImageView
+                android:id="@+id/attention_item_sex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/attention_item_nickname"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@id/attention_item_nickname"
+                android:src="@mipmap/sex_boy"/>
+
+            <TextView
+                android:id="@+id/attention_item_age"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/attention_item_sex"
+                android:layout_marginLeft="20dp"
+                android:layout_toRightOf="@id/attention_item_sex"/>
+
+
+
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+</layout>

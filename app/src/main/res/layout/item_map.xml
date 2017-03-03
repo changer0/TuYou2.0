@@ -50,11 +50,11 @@
 
             <ImageView
                 android:id="@+id/map_item_attention"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginRight="5dp"
+                android:layout_marginRight="20dp"
                 android:src="@mipmap/ic_no_attention"/>
 
             <TextView
@@ -76,10 +76,10 @@
 
             <ImageView
                 android:id="@+id/map_item_hi"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_alignTop="@id/map_item_attention"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="20dp"
                 android:layout_toLeftOf="@id/map_item_attention"
                 android:src="@mipmap/ic_hi"/>
 
