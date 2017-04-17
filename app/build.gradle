@@ -8,7 +8,7 @@ android {
         tuyou {
             keyAlias 'tuyou'
             keyPassword '123456'
-            storeFile file('..\\tuyou.jks')
+            storeFile file('../tuyou.jks')
             storePassword '123456'
         }
     }
