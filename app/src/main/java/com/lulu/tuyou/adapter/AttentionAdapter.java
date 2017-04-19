@@ -161,17 +161,22 @@ public class AttentionAdapter extends RecyclerView.Adapter<AttentionAdapter.MyVi
             mCardView.setOnClickListener(listener);
         }
         public void bindData(TuYouUser user) {
-            mNickname.setText(user.getNickName());
-            mAge.setText(String.valueOf(user.getAge()));
-            Context context = mIcon.getContext();
-            Glide.with(context).load(user.getIcon())
-                    .transform(new GlideCircleTransform(context))
-                    .into(mIcon);
-            String sex = user.getSex();
-            if (Constant.SEX_BOY.equals(sex)) {
-                mSex.setImageResource(R.mipmap.sex_boy);
-            } else if (Constant.SEX_GIRL.equals(sex)) {
-                mSex.setImageResource(R.mipmap.sex_girl);
+            if (user != null) {
+                //点击时取出
+                mCardView.setTag(user);
+
+                mNickname.setText(user.getNickName());
+                mAge.setText(String.valueOf(user.getAge()));
+                Context context = mIcon.getContext();
+                Glide.with(context).load(user.getIcon())
+                        .transform(new GlideCircleTransform(context))
+                        .into(mIcon);
+                String sex = user.getSex();
+                if (Constant.SEX_BOY.equals(sex)) {
+                    mSex.setImageResource(R.mipmap.sex_boy);
+                } else if (Constant.SEX_GIRL.equals(sex)) {
+                    mSex.setImageResource(R.mipmap.sex_girl);
+                }
             }
 
         }

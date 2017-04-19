@@ -2,7 +2,6 @@ package com.lulu.tuyou.view;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,12 +23,8 @@ import com.amap.api.maps2d.MapView;
 import com.lulu.tuyou.R;
 import com.lulu.tuyou.common.Constant;
 import com.lulu.tuyou.databinding.FragmentMapBinding;
-import com.lulu.tuyou.model.TuYouUser;
 import com.lulu.tuyou.presenter.IMapPresenter;
 import com.lulu.tuyou.presenter.MapPresenterImpl;
-
-import cn.leancloud.chatkit.activity.LCIMConversationActivity;
-import cn.leancloud.chatkit.utils.LCIMConstants;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -109,7 +103,8 @@ public class MapFragment extends Fragment implements IMapView, View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.map_ic_up:
-                if (MapPresenterImpl.isHaveFriends) {
+                if (MapPresenterImpl.isHasNearby) {
+                    MapPresenterImpl.isDisplayNearby = true;
                     hideUpArrows();
                 } else {
                     Toast.makeText(mContext, R.string.map_no_friends, Toast.LENGTH_SHORT).show();

@@ -43,9 +43,9 @@ public class LCIMConversationListFragment extends Fragment {
 
     refreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.fragment_conversation_srl_pullrefresh);
     recyclerView = (RecyclerView) view.findViewById(R.id.fragment_conversation_srl_view);
-    mToolbar = (Toolbar) view.findViewById(R.id.fragment_toolbar);
-    //设置Toolbar
-    mToolbar.setTitle("最近消息");
+//    mToolbar = (Toolbar) view.findViewById(R.id.fragment_toolbar);
+//    //设置Toolbar
+//    mToolbar.setTitle("最近消息");
     refreshLayout.setEnabled(false);
     layoutManager = new LinearLayoutManager(getActivity());
     recyclerView.setLayoutManager(layoutManager);

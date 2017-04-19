@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 
 import com.lulu.tuyou.R;
 import com.lulu.tuyou.adapter.AttentionAdapter;
@@ -15,6 +16,7 @@ import com.lulu.tuyou.common.Constant;
 import com.lulu.tuyou.databinding.ActivityAttentionBinding;
 import com.lulu.tuyou.model.TuYouRelation;
 import com.lulu.tuyou.model.TuYouUser;
+import com.lulu.tuyou.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +27,11 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
 
+/**
+ * “我关注的人”页面
+ */
 public class AttentionActivity
-        extends AppCompatActivity {
+        extends AppCompatActivity implements MapAdapter.OnChildListener {
 
     private AttentionAdapter mAdapter;
 
@@ -43,6 +48,7 @@ public class AttentionActivity
         mAdapter = new AttentionAdapter(this, new Vector<TuYouUser>());
         recyclerView.setAdapter(mAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mAdapter.setListener(this);
 
         //从网络中获取到 “我” 关注的人
         TuYouUser currentUser = Constant.currentUser;
@@ -82,5 +88,13 @@ public class AttentionActivity
         });
 
 
+    }
+
+    @Override
+    public void onChildClick(View view) {
+        if (view != null) {
+            TuYouUser user = (TuYouUser) view.getTag();
+            Utils.jumpToChatUINewTask(this, user.getObjectId());
+        }
     }
 }

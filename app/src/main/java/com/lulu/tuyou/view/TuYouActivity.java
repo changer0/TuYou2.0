@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.amap.api.services.nearby.NearbySearch;
 import com.bumptech.glide.Glide;
 import com.lulu.tuyou.R;
 import com.lulu.tuyou.common.Constant;
@@ -120,6 +121,9 @@ public class TuYouActivity extends AppCompatActivity implements View.OnClickList
     // 退出登录
     ///////////////////////////////////////////////////////////////////////////
     private void loginOut() {
+        NearbySearch.getInstance(this).setUserID(Constant.currentUser.getObjectId());
+        NearbySearch.getInstance(this).clearUserInfoAsyn();//异步清楚用户信息
+        NearbySearch.destroy();//登出后记得销毁附近功能
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("您确定要登出吗？点击确定将返回登录页面！")
                 .setTitle("警告")

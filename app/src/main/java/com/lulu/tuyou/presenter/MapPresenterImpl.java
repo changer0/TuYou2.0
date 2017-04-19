@@ -1,8 +1,6 @@
 package com.lulu.tuyou.presenter;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -31,14 +29,7 @@ import com.amap.api.services.nearby.NearbySearchFunctionType;
 import com.amap.api.services.nearby.NearbySearchResult;
 import com.amap.api.services.nearby.UploadInfo;
 import com.avos.avoscloud.AVException;
-import com.avos.avoscloud.AVInstallation;
-import com.avos.avoscloud.AVPush;
-import com.avos.avoscloud.AVQuery;
-import com.avos.avoscloud.PushService;
 import com.avos.avoscloud.SendCallback;
-import com.avos.avoscloud.im.v2.AVIMClient;
-import com.avos.avoscloud.im.v2.AVIMException;
-import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
 
 import com.lulu.tuyou.R;
 import com.lulu.tuyou.adapter.MapAdapter;
@@ -48,10 +39,6 @@ import com.lulu.tuyou.model.TuYouRelation;
 import com.lulu.tuyou.model.TuYouUser;
 import com.lulu.tuyou.utils.Utils;
 import com.lulu.tuyou.view.IMapView;
-import com.lulu.tuyou.view.TuYouActivity;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,7 +53,6 @@ import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
-import cn.leancloud.chatkit.LCChatKit;
 import cn.leancloud.chatkit.LCChatKitUser;
 
 /**
@@ -225,7 +211,8 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
     // 获取附近人的回调接口
     ///////////////////////////////////////////////////////////////////////////
     private boolean isToast = false;
-    public static boolean isHaveFriends = false;//附近是否有图友
+    public static boolean isHasNearby = false;//附近是否有图友
+    public static boolean isDisplayNearby = false;
     private Map<String, TuYouUser> mOldUserHashMap = new HashMap<>();
     private Map<String, LatLonPoint> mOldPoint = new HashMap<>();
     private Map<String, LCChatKitUser> mKitUserMap = new HashMap<>();
@@ -262,20 +249,24 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
                         //有时会将自己的位置显示出来
                         if (list.size() == 1 && !isToast) {
                             Toast.makeText(mContext, R.string.map_no_friends, Toast.LENGTH_SHORT).show();
-                            MapPresenterImpl.isHaveFriends = false;
+                            MapPresenterImpl.isHasNearby = false;
+                            if (isDisplayNearby) {
+                                mMapFragmentView.hideEmptyView();
+                                isDisplayNearby = false;
+                            }
                             isToast = true;
                         }
                         continue;
                     }
 
 
-                    MapPresenterImpl.isHaveFriends = true;
+                    MapPresenterImpl.isHasNearby = true;
                     final LatLonPoint point = info.getPoint();
                     LatLonPoint oldPoint = mOldPoint.get(userID);
                     if (oldPoint != null) {
                         double oldLat = oldPoint.getLatitude();
                         double oldLon = oldPoint.getLongitude();
-                        //这是一步优化处理，当经纬度都大于1'之后才进行更新
+                        //这是一步优化处理，当经纬度都大于1''之后才进行更新
                         if (Math.abs(oldLat - point.getLatitude()) < (1 / 60.0) && Math.abs(oldLon - point.getLongitude()) < (1 / 60.0)) {
                             //Log.d("lulu", "MapPresenterImpl-onNearbyInfoSearched  执行了优化逻辑");
                             //此时还是需要把这个用户标记在上面
@@ -302,10 +293,15 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
 
             } else {
                 Toast.makeText(mContext, R.string.map_no_friends, Toast.LENGTH_SHORT).show();
-                MapPresenterImpl.isHaveFriends = false;
+                MapPresenterImpl.isHasNearby = false;
+                if (isDisplayNearby) {
+                    mMapFragmentView.hideEmptyView();
+                    isDisplayNearby = false;
+                }
                 isToast = true;
             }
         } else {
+            MapPresenterImpl.isHasNearby = false;
             Log.d("lulu", "MapPresenterImpl-onNearbyInfoSearched  出现异常异常码： " + resultCode);
         }
     }
@@ -413,7 +409,13 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
     ///////////////////////////////////////////////////////////////////////////
     @Override
     public boolean onMarkerClick(Marker marker) {
-        mMapFragmentView.hideUpArrows();
+        if (isHasNearby && !isDisplayNearby) {
+            mMapFragmentView.hideUpArrows();
+            isDisplayNearby = true;
+            return true;
+        } else {
+            Toast.makeText(mContext, R.string.map_no_friends, Toast.LENGTH_SHORT).show();
+        }
         return false;
     }
 
@@ -455,6 +457,8 @@ public class MapPresenterImpl implements IMapPresenter, AMapLocationListener, Lo
             mLocationClient.onDestroy();
         }
         if (mNearbySearch != null) {
+            NearbySearch.getInstance(mContext).setUserID(Constant.currentUser.getObjectId());
+            NearbySearch.getInstance(mContext).clearUserInfoAsyn();//异步清楚用户信息
             mNearbySearch.destroy();
         }
     }

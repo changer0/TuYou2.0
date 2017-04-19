@@ -3,21 +3,39 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:fitsSystemWindows="true"
               android:orientation="vertical">
 
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+    <!--<android.support.design.widget.AppBarLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">-->
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/fragment_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"/>
+        <!--<android.support.v7.widget.Toolbar-->
+            <!--android:id="@+id/fragment_toolbar"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="?actionBarSize"/>-->
 
-    </android.support.design.widget.AppBarLayout>
+    <!--</android.support.design.widget.AppBarLayout>-->
+
+    <RelativeLayout
+        android:id="@+id/common_title" android:background="@color/colorPrimary"
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="68dp">
+        <TextView
+            android:text="最近消息"
+            android:textColor="#ffffff"
+            android:id="@+id/common_title_header"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="18dp"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/fragment_conversation_srl_pullrefresh"
         android:layout_width="match_parent"
