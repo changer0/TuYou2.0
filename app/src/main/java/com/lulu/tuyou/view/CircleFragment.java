@@ -5,6 +5,7 @@ import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,15 +15,16 @@ import com.lulu.tuyou.R;
 import com.lulu.tuyou.databinding.FragmentCircleBinding;
 import com.lulu.tuyou.presenter.CirclePresenterImpl;
 import com.lulu.tuyou.presenter.ICirclePresenter;
+import com.lulu.tuyou.utils.RefreshListener;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CircleFragment extends Fragment implements ICircleView {
+public class CircleFragment extends Fragment implements ICircleView, SwipeRefreshLayout.OnRefreshListener {
     private static CircleFragment instance;
     private ICirclePresenter mPresenter;
     private Context mContext;
-    private RecyclerView mRecycler;
+    private FragmentCircleBinding mBinding;
 
     public static CircleFragment newInstance() {
         if (instance == null) {
@@ -35,25 +37,47 @@ public class CircleFragment extends Fragment implements ICircleView {
         return instance;
     }
 
-    public CircleFragment() {
-        // Required empty public constructor
-        //throw new RuntimeException("不能使用构造方法创建Fragment");
-    }
+    public CircleFragment() {}
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mContext = context;
-        mPresenter = new CirclePresenterImpl(this);
+        mPresenter = new CirclePresenterImpl(this, mContext);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        FragmentCircleBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_circle, container, false);
-        mRecycler = binding.circleRecycle;
-        // Inflate the layout for this fragment
-        return binding.getRoot();
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_circle, container, false);
+        initView();
+        return mBinding.getRoot();
     }
 
+    private void initView() {
+        mBinding.circleSwipeRefresh.setColorSchemeColors(mContext.getResources().getColor(R.color.colorApp2));
+        mBinding.circleSwipeRefresh.setOnRefreshListener(this);
+        mPresenter.bindData(mBinding);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 下拉刷新回调
+    ///////////////////////////////////////////////////////////////////////////
+    @Override
+    public void onRefresh() {
+        mPresenter.refreshData(new RefreshListener() {
+            @Override
+            public void refreshStart() {
+
+            }
+
+            @Override
+            public void refreshEnd() {
+                SwipeRefreshLayout swipeRefresh = mBinding.circleSwipeRefresh;
+                if (swipeRefresh.isRefreshing()) {
+                    swipeRefresh.setRefreshing(false);
+                }
+            }
+        });
+    }
 }

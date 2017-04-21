@@ -1,34 +1,37 @@
 package com.lulu.tuyou.model;
 
+import android.support.annotation.NonNull;
+
+import java.util.List;
+
 import cn.bmob.v3.BmobObject;
+import cn.bmob.v3.datatype.BmobDate;
 
 /**
- * Created by liangyue on 16/10/31.
+ * Created by lulu on 16/10/31.
+ *
  */
 
-public class TuYouTrack extends BmobObject {
+public class TuYouTrack extends BmobObject implements Comparable<TuYouTrack>{
     public final static Integer TYPE_IMAGE = 1;
     public final static Integer TYPE_VIDEO = 2;
     public final static Integer TYPE_TEXT = 3;
-    private String user;//用户id
+    private TuYouUser user;
     private String text;//内容
-    private String image;//图片
-    private String Video;//视频
+    private List<String> images;//图片
+    private String video;//视频
     private Integer type;//布局类型
-
-    public static Integer getTypeImage() {
-        return TYPE_IMAGE;
-    }
+    private String version = "0";//当前版本号
 
     public static Integer getTypeVideo() {
         return TYPE_VIDEO;
     }
 
-    public String getUser() {
+    public TuYouUser getUser() {
         return user;
     }
 
-    public void setUser(String user) {
+    public void setUser(TuYouUser user) {
         this.user = user;
     }
 
@@ -40,20 +43,20 @@ public class TuYouTrack extends BmobObject {
         this.text = text;
     }
 
-    public String getImage() {
-        return image;
+    public List<String> getImages() {
+        return images;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImages(List<String> images) {
+        this.images = images;
     }
 
     public String getVideo() {
-        return Video;
+        return video;
     }
 
     public void setVideo(String video) {
-        Video = video;
+        this.video = video;
     }
 
     public Integer getType() {
@@ -62,5 +65,23 @@ public class TuYouTrack extends BmobObject {
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public String getVersionId() {
+        return version;
+    }
+
+    public void setVersionId(String versionId) {
+        this.version = versionId;
+    }
+
+    //var1 = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).parse(createdAt).getTime();
+    // < -
+    // > +
+    @Override
+    public int compareTo(@NonNull TuYouTrack o) {
+        long otherUpdate = BmobDate.getTimeStamp(o.getUpdatedAt());
+        long curUpdate = BmobDate.getTimeStamp(getUpdatedAt());
+        return (int) (otherUpdate - curUpdate);
     }
 }

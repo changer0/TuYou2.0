@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout  xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--顶部-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/circle_bg"
+            android:background="#1281a3"
+            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+        <ImageView
+            android:id="@+id/circle_icon"
+            android:layout_marginTop="180dp"
+            android:layout_marginRight="10dp"
+            android:src="@mipmap/ic_login_qq"
+            android:layout_alignParentRight="true"
+            android:layout_width="40dp"
+            android:layout_height="40dp" />
+        <TextView
+            android:text="Changer0"
+            android:textColor="#fff"
+            android:id="@+id/circle_username"
+            android:layout_marginRight="20dp"
+            android:layout_toLeftOf="@id/circle_icon"
+            android:layout_alignTop="@id/circle_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+</layout>

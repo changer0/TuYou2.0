@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.Window;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSONObject;
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVInstallation;
 import com.avos.avoscloud.AVPush;
@@ -23,6 +22,13 @@ import com.lulu.tuyou.R;
 import com.lulu.tuyou.common.Constant;
 import com.lulu.tuyou.model.TuYouUser;
 import com.lulu.tuyou.view.TuYouActivity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.UpdateListener;
@@ -67,7 +73,7 @@ public class Utils {
         PushService.subscribe(context, Constant.PUSH_HI_CHANNEL, TuYouActivity.class);
         push.setQuery(pushQuery);
         push.setChannel(Constant.PUSH_HI_CHANNEL);
-        JSONObject jsonObject = new JSONObject();
+        com.alibaba.fastjson.JSONObject jsonObject = new com.alibaba.fastjson.JSONObject();
         jsonObject.put(Constant.PUSH_HI_ACTION, action);
         if (!TextUtils.isEmpty(state)){
             jsonObject.put(Constant.PUSH_HI_STATE, state);
@@ -181,5 +187,26 @@ public class Utils {
         return statusBarHeight;
     }
 
+    //生成JsonString
+    public synchronized static String getStringsJson(List<String> list) {
+        JSONArray jsonArray = new JSONArray();
+        for (String s : list) {
+            jsonArray.put(s);
+        }
+        return jsonArray.toString();
+    }
+    //上一方法反向
+    public synchronized static List<String> genStringListFromJson(String json) {
+        List<String> ret = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(json);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                ret.add(jsonArray.getString(i));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
 
 }

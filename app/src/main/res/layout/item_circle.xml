@@ -1,6 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
-</LinearLayout>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:id="@+id/item_circle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:orientation="horizontal">
+
+            <!--头像-->
+            <ImageView
+                tools:src="@mipmap/ic_app"
+                android:id="@+id/item_circle_icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp" />
+
+            <RelativeLayout
+                android:layout_marginLeft="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/item_circle_username"
+                    tools:text="UserName"
+                    android:textColor="#0022ff"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_below="@id/item_circle_username"
+                    tools:text="这是一个测试这是一个测试这是一个测试这是一个测试这是一个测试这是一个测试"
+                    android:textColor="#000"
+                    android:id="@+id/item_circle_text"
+                    android:lineSpacingExtra="3dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <FrameLayout
+                    android:layout_below="@id/item_circle_text"
+                    android:id="@+id/item_circle_image_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/item_circle_time"
+                    android:textSize="8sp"
+                    tools:text="14分钟以前"
+                    android:layout_below="@id/item_circle_image_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_below="@id/item_circle"
+            android:layout_marginTop="5dp"
+            android:background="#D8D8D8"
+            android:layout_width="match_parent"
+            android:layout_height="1px"/>
+    </RelativeLayout>
+
+</layout>
+
