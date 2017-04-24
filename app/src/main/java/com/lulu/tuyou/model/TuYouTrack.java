@@ -23,6 +23,11 @@ public class TuYouTrack extends BmobObject implements Comparable<TuYouTrack>{
     private Integer type;//布局类型
     private String version = "0";//当前版本号
 
+
+    public void setUpdatedAt(String updateTime) {
+        super.setUpdatedAt(updateTime);
+    }
+
     public static Integer getTypeVideo() {
         return TYPE_VIDEO;
     }

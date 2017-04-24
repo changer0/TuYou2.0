@@ -189,6 +189,9 @@ public class Utils {
 
     //生成JsonString
     public synchronized static String getStringsJson(List<String> list) {
+        if (list == null || list.size() == 0) {
+            return "";
+        }
         JSONArray jsonArray = new JSONArray();
         for (String s : list) {
             jsonArray.put(s);
@@ -197,6 +200,9 @@ public class Utils {
     }
     //上一方法反向
     public synchronized static List<String> genStringListFromJson(String json) {
+        if (TextUtils.isEmpty(json)) {
+            return null;
+        }
         List<String> ret = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(json);
