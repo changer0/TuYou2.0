@@ -27,6 +27,7 @@ public class TuYouTrackDbHandler {
     public static final int DB_DATA_RECEIVE_STATE_ERROR = 0x2;
     public static final int DB_DATA_RECEIVE_TYPE_GET_TRACKS = 0x3;
     public static final int DB_DATA_RECEIVE_TYPE_ADD = 0x4;
+    public static final int DB_DATA_RECEIVER_TYPE_CLEAR = 0x5;
 //    public static final int DB_DATA_RECEIVE_TYPE_GET = 0x4;
 
 
@@ -37,8 +38,20 @@ public class TuYouTrackDbHandler {
         dbHelper = DbHelper.getInstance(mContext);
     }
 
-    public synchronized void clearTracks() {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
+    public synchronized void clearTracks(final OnDataReceiveListener listener) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SQLiteDatabase db = null;
+                try {
+                    db = dbHelper.getReadableDatabase();
+                    db.delete(TuYouDbContract.TuYouTrack.TABLE_NAME, null, null);
+                    listener.onReceive(DB_DATA_RECEIVER_TYPE_CLEAR, null, DB_DATA_RECEIVE_STATE_SUCCESS);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
 
     }
 
@@ -46,20 +59,17 @@ public class TuYouTrackDbHandler {
     ///////////////////////////////////////////////////////////////////////////
     // 对外开放的方法
     ///////////////////////////////////////////////////////////////////////////
-    public synchronized void getTracksFromDb(OnDataReceiveListener listener) {
-        mDataListener = listener;
+    public synchronized void getTracksFromDb(final OnDataReceiveListener listener) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Message msg = Message.obtain();
-                msg.what = DB_DATA_RECEIVE_TYPE_GET_TRACKS;
-                msg.obj = getTracks();
-                mHandler.sendMessage(msg);
+                List<TuYouTrack> tracks = getTracks();
+                if (listener != null) {
+                    listener.onReceive(DB_DATA_RECEIVE_TYPE_ADD, tracks, DB_DATA_RECEIVE_STATE_SUCCESS);
+                }
             }
         }).start();
     }
-
-
 
 
 
@@ -68,16 +78,23 @@ public class TuYouTrackDbHandler {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                SQLiteDatabase db = dbHelper.getReadableDatabase();
-                ContentValues values = new ContentValues();
-                values.put(TuYouDbContract.TuYouTrack._ID, track.getObjectId());
-                values.put(TuYouDbContract.TuYouTrack.COLUMN_NAME_USER_ID, track.getUser().getObjectId());
-                values.put(TuYouDbContract.TuYouTrack.COLUMN_NAME_TEXT, track.getText());
-                values.put(TuYouDbContract.TuYouTrack.COLUMN_NAME_UPDATE_TIME, track.getUpdatedAt());
-                values.put(TuYouDbContract.TuYouTrack.COLUMN_NAME_IMAGE_CONTAINS, Utils.getStringsJson(track.getImages()));
-                db.update(TuYouDbContract.TuYouTrack.TABLE_NAME, values,
-                        "_ID=?", new String[]{track.getObjectId().toString()}
-                );
+                SQLiteDatabase db = null;
+                try {
+                    db = dbHelper.getReadableDatabase();
+                    ContentValues values = new ContentValues();
+                    values.put(TuYouDbContract.TuYouTrack._ID, track.getObjectId());
+                    values.put(TuYouDbContract.TuYouTrack.COLUMN_NAME_USER_ID, track.getUser().getObjectId());
+                    values.put(TuYouDbContract.TuYouTrack.COLUMN_NAME_TEXT, track.getText());
+                    values.put(TuYouDbContract.TuYouTrack.COLUMN_NAME_UPDATE_TIME, track.getUpdatedAt());
+                    values.put(TuYouDbContract.TuYouTrack.COLUMN_NAME_IMAGE_CONTAINS, Utils.getStringsJson(track.getImages()));
+                    db.update(TuYouDbContract.TuYouTrack.TABLE_NAME, values,
+                            "_ID=?", new String[]{track.getObjectId().toString()}
+                    );
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    db.close();
+                }
             }
         }).start();
 
@@ -86,25 +103,37 @@ public class TuYouTrackDbHandler {
     private synchronized List<TuYouTrack> getTracks() {
         SQLiteDatabase db = null;
         Cursor cursor = null;
-        List<TuYouTrack> tracks = new ArrayList<>();
-        db = dbHelper.getReadableDatabase();
-        cursor = db.query(TuYouDbContract.TuYouTrack.TABLE_NAME, null, null, null, null, null, null);
+        List<TuYouTrack> tracks = null;
+        try {
+            tracks = new ArrayList<>();
+            db = dbHelper.getReadableDatabase();
+            cursor = db.query(TuYouDbContract.TuYouTrack.TABLE_NAME, null, null, null, null, null, null);
 
-        while (cursor.moveToNext()) {
-            TuYouTrack track = new TuYouTrack();
-            int newId = cursor.getInt(cursor.getColumnIndex(TuYouDbContract.TuYouTrack._ID));
-            track.setObjectId(String.valueOf(newId));
-            String newUserId = cursor.getString(cursor.getColumnIndex(TuYouDbContract.TuYouTrack.COLUMN_NAME_USER_ID));
-            TuYouUser user = new TuYouUser();
-            user.setObjectId(newUserId);
-            track.setUser(user);
-            String newText = cursor.getString(cursor.getColumnIndex(TuYouDbContract.TuYouTrack.COLUMN_NAME_TEXT));
-            track.setText(newText);
-            String newImages = cursor.getString(cursor.getColumnIndex(TuYouDbContract.TuYouTrack.COLUMN_NAME_IMAGE_CONTAINS));
-            track.setImages(Utils.genStringListFromJson(newImages));
-            String updateTime = cursor.getString(cursor.getColumnIndex(TuYouDbContract.TuYouTrack.COLUMN_NAME_UPDATE_TIME));
-            track.setUpdatedAt(updateTime);
-            tracks.add(track);
+            while (cursor.moveToNext()) {
+                TuYouTrack track = new TuYouTrack();
+                int newId = cursor.getInt(cursor.getColumnIndex(TuYouDbContract.TuYouTrack._ID));
+                track.setObjectId(String.valueOf(newId));
+                String newUserId = cursor.getString(cursor.getColumnIndex(TuYouDbContract.TuYouTrack.COLUMN_NAME_USER_ID));
+                TuYouUser user = new TuYouUser();
+                user.setObjectId(newUserId);
+                track.setUser(user);
+                String newText = cursor.getString(cursor.getColumnIndex(TuYouDbContract.TuYouTrack.COLUMN_NAME_TEXT));
+                track.setText(newText);
+                String newImages = cursor.getString(cursor.getColumnIndex(TuYouDbContract.TuYouTrack.COLUMN_NAME_IMAGE_CONTAINS));
+                track.setImages(Utils.genStringListFromJson(newImages));
+                String updateTime = cursor.getString(cursor.getColumnIndex(TuYouDbContract.TuYouTrack.COLUMN_NAME_UPDATE_TIME));
+                track.setUpdatedAt(updateTime);
+                tracks.add(track);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+            if (cursor != null) {
+                cursor.close();
+            }
         }
         return tracks;
     }
@@ -121,8 +150,7 @@ public class TuYouTrackDbHandler {
 //
 //    }
 
-    public synchronized void addTracks(final List<TuYouTrack> tracks, OnStateListener listener) {
-        mAddListener = listener;
+    public synchronized void addTracks(final List<TuYouTrack> tracks, final OnDataReceiveListener listener) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -131,7 +159,10 @@ public class TuYouTrackDbHandler {
                 for (TuYouTrack track : tracks) {
                     addTracks(db, track);
                 }
-                mHandler.sendEmptyMessage(DB_DATA_RECEIVE_TYPE_ADD);
+                //mHandler.sendEmptyMessage(DB_DATA_RECEIVE_TYPE_ADD);
+                if (listener != null) {
+                    listener.onReceive(DB_DATA_RECEIVE_TYPE_ADD, null, DB_DATA_RECEIVE_STATE_SUCCESS);
+                }
             }
         }).start();
 
@@ -151,40 +182,34 @@ public class TuYouTrackDbHandler {
 
 
 
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-
-            switch (msg.what) {
-                case DB_DATA_RECEIVE_TYPE_GET_TRACKS:
-                    if (mDataListener != null) {
-                        mDataListener.onReceive(DB_DATA_RECEIVE_TYPE_GET_TRACKS, ((List<TuYouTrack>) msg.obj));
-                    }
-                    break;
-                case DB_DATA_RECEIVE_TYPE_ADD:
-                    if (mAddListener != null) {
-                        mAddListener.onState(DB_DATA_RECEIVE_STATE_SUCCESS);
-                    }
-                    break;
-            }
-
-        }
-    };
+//    private Handler mHandler = new Handler() {
+//        @Override
+//        public void handleMessage(Message msg) {
+//            super.handleMessage(msg);
+//
+//            switch (msg.what) {
+//                case DB_DATA_RECEIVE_TYPE_GET_TRACKS:
+//                    if (mDataListener != null) {
+//                        mDataListener.onReceive(DB_DATA_RECEIVE_TYPE_GET_TRACKS, ((List<TuYouTrack>) msg.obj));
+//                    }
+//                    break;
+//                case DB_DATA_RECEIVE_TYPE_ADD:
+//
+//                    break;
+//            }
+//
+//        }
+//    };
 
 
     ///////////////////////////////////////////////////////////////////////////
     //数据回调接口
     ///////////////////////////////////////////////////////////////////////////
     public interface OnDataReceiveListener {
-        void onReceive(int type, List<TuYouTrack> tracks);
+        void onReceive(int type, List<TuYouTrack> tracks, int state);
     }
     private OnDataReceiveListener mDataListener;
 
-    public interface OnStateListener {
-        void onState(int state);
-    }
-    private OnStateListener mAddListener;
 
 //    public void setmListener(OnDataReceiveListener mDataListener) {
 //        this.mDataListener = mDataListener;
