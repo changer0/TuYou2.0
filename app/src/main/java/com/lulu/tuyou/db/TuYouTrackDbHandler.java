@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Handler;
 import android.os.Message;
 
 import com.lulu.tuyou.model.TuYouTrack;
@@ -15,6 +14,8 @@ import com.lulu.tuyou.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.lulu.tuyou.db.DbConstant;
+
 /**
  * Created by lulu on 17-4-20.
  * 图友圈 本地数据库的处理类
@@ -23,12 +24,8 @@ import java.util.List;
 public class TuYouTrackDbHandler {
     private Context mContext;
     private SQLiteOpenHelper dbHelper;
-    public static final int DB_DATA_RECEIVE_STATE_SUCCESS = 0x1;
-    public static final int DB_DATA_RECEIVE_STATE_ERROR = 0x2;
-    public static final int DB_DATA_RECEIVE_TYPE_GET_TRACKS = 0x3;
-    public static final int DB_DATA_RECEIVE_TYPE_ADD = 0x4;
-    public static final int DB_DATA_RECEIVER_TYPE_CLEAR = 0x5;
-//    public static final int DB_DATA_RECEIVE_TYPE_GET = 0x4;
+    private List<TuYouTrack> mTracks;
+    //    public static final int DB_DATA_RECEIVE_TYPE_GET = 0x4;
 
 
 
@@ -38,41 +35,51 @@ public class TuYouTrackDbHandler {
         dbHelper = DbHelper.getInstance(mContext);
     }
 
-    public synchronized void clearTracks(final OnDataReceiveListener listener) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SQLiteDatabase db = null;
-                try {
-                    db = dbHelper.getReadableDatabase();
-                    db.delete(TuYouDbContract.TuYouTrack.TABLE_NAME, null, null);
-                    listener.onReceive(DB_DATA_RECEIVER_TYPE_CLEAR, null, DB_DATA_RECEIVE_STATE_SUCCESS);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-
-    }
-
 
     ///////////////////////////////////////////////////////////////////////////
     // 对外开放的方法
     ///////////////////////////////////////////////////////////////////////////
-    public synchronized void getTracksFromDb(final OnDataReceiveListener listener) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                List<TuYouTrack> tracks = getTracks();
-                if (listener != null) {
-                    listener.onReceive(DB_DATA_RECEIVE_TYPE_ADD, tracks, DB_DATA_RECEIVE_STATE_SUCCESS);
-                }
+
+
+    public synchronized int clearTracks() {
+        SQLiteDatabase db = null;
+        int state;
+        try {
+            db = dbHelper.getReadableDatabase();
+            db.delete(TuYouDbContract.TuYouTrack.TABLE_NAME, null, null);
+            state =  DbConstant.DB_DATA_RECEIVE_STATE_SUCCESS;
+        } catch (Exception e) {
+            state =  DbConstant.DB_DATA_RECEIVE_STATE_ERROR;
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
             }
-        }).start();
+        }
+        return state;
     }
 
 
-
+    public synchronized int addTracks(final List<TuYouTrack> tracks) {
+        int state;
+        SQLiteDatabase db = null;
+        Message msg = Message.obtain();
+        try {
+            db = dbHelper.getReadableDatabase();
+            for (TuYouTrack track : tracks) {
+                addTracks(db, track);
+            }
+            state = DbConstant.DB_DATA_RECEIVE_STATE_SUCCESS;
+        } catch (Exception e) {
+            state = DbConstant.DB_DATA_RECEIVE_STATE_ERROR;
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+        return state;
+    }
 
     public synchronized void updateTrack(final TuYouTrack track) {
         new Thread(new Runnable() {
@@ -90,6 +97,7 @@ public class TuYouTrackDbHandler {
                     db.update(TuYouDbContract.TuYouTrack.TABLE_NAME, values,
                             "_ID=?", new String[]{track.getObjectId().toString()}
                     );
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -100,7 +108,7 @@ public class TuYouTrackDbHandler {
 
     }
 
-    private synchronized List<TuYouTrack> getTracks() {
+    public synchronized List<TuYouTrack> getTracks(Message msg) {
         SQLiteDatabase db = null;
         Cursor cursor = null;
         List<TuYouTrack> tracks = null;
@@ -125,7 +133,9 @@ public class TuYouTrackDbHandler {
                 track.setUpdatedAt(updateTime);
                 tracks.add(track);
             }
+            msg.arg1 = DbConstant.DB_DATA_RECEIVE_STATE_SUCCESS;
         } catch (Exception e) {
+            msg.arg1 = DbConstant.DB_DATA_RECEIVE_STATE_ERROR;
             e.printStackTrace();
         } finally {
             if (db != null) {
@@ -150,23 +160,6 @@ public class TuYouTrackDbHandler {
 //
 //    }
 
-    public synchronized void addTracks(final List<TuYouTrack> tracks, final OnDataReceiveListener listener) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SQLiteDatabase db = null;
-                db = dbHelper.getReadableDatabase();
-                for (TuYouTrack track : tracks) {
-                    addTracks(db, track);
-                }
-                //mHandler.sendEmptyMessage(DB_DATA_RECEIVE_TYPE_ADD);
-                if (listener != null) {
-                    listener.onReceive(DB_DATA_RECEIVE_TYPE_ADD, null, DB_DATA_RECEIVE_STATE_SUCCESS);
-                }
-            }
-        }).start();
-
-    }
 
     private synchronized void addTracks(SQLiteDatabase db, TuYouTrack track) {
         ContentValues values = new ContentValues();
@@ -176,7 +169,6 @@ public class TuYouTrackDbHandler {
         values.put(TuYouDbContract.TuYouTrack.COLUMN_NAME_UPDATE_TIME, track.getUpdatedAt());
         values.put(TuYouDbContract.TuYouTrack.COLUMN_NAME_IMAGE_CONTAINS, Utils.getStringsJson(track.getImages()));
 //        values.put(TuYouDbContract.TuYouTrack.COLUMN_NAME_VERSION, track.getVersionId());
-
         db.insert(TuYouDbContract.TuYouTrack.TABLE_NAME, null, values);
     }
 
@@ -186,35 +178,34 @@ public class TuYouTrackDbHandler {
 //        @Override
 //        public void handleMessage(Message msg) {
 //            super.handleMessage(msg);
-//
 //            switch (msg.what) {
+//                case DB_DATA_RECEIVE_TYPE_ADD://添加
+//                    mDataListener.onReceive(DB_DATA_RECEIVE_TYPE_ADD, null, msg.arg1);
+//                    break;
 //                case DB_DATA_RECEIVE_TYPE_GET_TRACKS:
-//                    if (mDataListener != null) {
-//                        mDataListener.onReceive(DB_DATA_RECEIVE_TYPE_GET_TRACKS, ((List<TuYouTrack>) msg.obj));
-//                    }
+//                    mDataListener.onReceive(DB_DATA_RECEIVE_TYPE_GET_TRACKS, mTracks, msg.arg1);
 //                    break;
-//                case DB_DATA_RECEIVE_TYPE_ADD:
+//                case DB_DATA_RECEIVER_TYPE_CLEAR:
+//                    mDataListener.onReceive(DB_DATA_RECEIVER_TYPE_CLEAR, null, msg.arg1);
+//                    break;
 //
-//                    break;
 //            }
 //
 //        }
 //    };
-
-
-    ///////////////////////////////////////////////////////////////////////////
-    //数据回调接口
-    ///////////////////////////////////////////////////////////////////////////
-    public interface OnDataReceiveListener {
-        void onReceive(int type, List<TuYouTrack> tracks, int state);
-    }
-    private OnDataReceiveListener mDataListener;
-
-
-//    public void setmListener(OnDataReceiveListener mDataListener) {
-//        this.mDataListener = mDataListener;
+//
+//
+//    ///////////////////////////////////////////////////////////////////////////
+//    //数据回调接口
+//    ///////////////////////////////////////////////////////////////////////////
+//    public interface OnDataReceiveListener {
+//        void onReceive(int type, List<TuYouTrack> tracks, int state);
 //    }
-
+//    private OnDataReceiveListener mDataListener;
+//
+//    public void setDataListener(OnDataReceiveListener dataListener) {
+//        mDataListener = dataListener;
+//    }
     ///////////////////////////////////////////////////////////////////////////
     // 数据库帮助类
     ///////////////////////////////////////////////////////////////////////////

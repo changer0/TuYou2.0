@@ -15,71 +15,66 @@ public class TuYouVersionDbHandler {
 
     private Context mContext;
     private DbHelper dbHelper;
-    public static final int DB_TRACK_VERSION = 0x1;
 
     public TuYouVersionDbHandler(Context context) {
         mContext = context;
         dbHelper = DbHelper.getInstance(mContext);
     }
 
-    public void setTrackVersion(final int version) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String versionStr = String.valueOf(version);
-                SQLiteDatabase db = dbHelper.getReadableDatabase();
-                ContentValues values = new ContentValues();
-                values.put(TuYouDbContract.TuYouVersion.COLUMN_NAME_TRACK_VERSION, versionStr);
-                db.insert(TuYouDbContract.TuYouVersion.TABLE_NAME, null, values);
+    public synchronized int setTrackVersion(final int version) {
+        int state;
+        String versionStr = String.valueOf(version);
+        SQLiteDatabase db = null;
+        try {
+            db = dbHelper.getReadableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(TuYouDbContract.TuYouVersion.COLUMN_NAME_TRACK_VERSION, versionStr);
+            db.insert(TuYouDbContract.TuYouVersion.TABLE_NAME, null, values);
+            state = DbConstant.DB_DATA_RECEIVE_STATE_SUCCESS;
+        } catch (Exception e) {
+            state = DbConstant.DB_DATA_RECEIVE_STATE_ERROR;
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
             }
-        }).start();
+        }
+        return state;
     }
 
-    public void getTrackVersionFromDb(onGetTrackVersionListener listener) {
-        mTrackVersionListener = listener;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Message msg = Message.obtain();
-                msg.what = DB_TRACK_VERSION;
-                msg.obj = getTrackVersion();
-                mHandler.sendMessage(msg);
-            }
-        }).start();
 
-    }
-
-    public interface onGetTrackVersionListener {
-        void onGetTrackVersion(int version);
-    }
-    private onGetTrackVersionListener mTrackVersionListener = null;
-
-    private int getTrackVersion () {
+    public synchronized int getTrackVersion (Message msg) {
         int ret = 0;
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.query(TuYouDbContract.TuYouVersion.TABLE_NAME, null, null, null, null, null, null);
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+        try {
+           db = dbHelper.getReadableDatabase();
+            cursor = db.query(TuYouDbContract.TuYouVersion.TABLE_NAME, null, null, null, null, null, null);
 
-        while (cursor.moveToNext()) {
-            String version = cursor.getString(cursor.getColumnIndex(TuYouDbContract.TuYouVersion.COLUMN_NAME_TRACK_VERSION));
-            ret = Integer.valueOf(version);
+            while (cursor.moveToNext()) {
+                String version = cursor.getString(cursor.getColumnIndex(TuYouDbContract.TuYouVersion.COLUMN_NAME_TRACK_VERSION));
+                ret = Integer.valueOf(version);
+            }
+            msg.arg1 = DbConstant.DB_DATA_RECEIVE_STATE_SUCCESS;
+        } catch (NumberFormatException e) {
+            msg.arg1 = DbConstant.DB_DATA_RECEIVE_STATE_ERROR;
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db != null) {
+                db.close();
+            }
         }
         return ret;
     }
 
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case DB_TRACK_VERSION:
-                    if (mTrackVersionListener != null) {
-                        int version = (int) msg.obj;
-                        mTrackVersionListener.onGetTrackVersion(version);
-                    }
-                    break;
-            }
-        }
-    };
+//    public interface onGetTrackVersionListener {
+//        void onGetTrackVersion(int version);
+//    }
+//    private onGetTrackVersionListener mTrackVersionListener = null;
+
 
 
 
