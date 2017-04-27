@@ -58,6 +58,15 @@ public class CircleFragment extends Fragment implements ICircleView, SwipeRefres
         mBinding.circleSwipeRefresh.setColorSchemeColors(mContext.getResources().getColor(R.color.colorApp2));
         mBinding.circleSwipeRefresh.setOnRefreshListener(this);
         mPresenter.bindData(mBinding);
+
+        mBinding.commonTitle.commonTitleMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CircleMenuDialog menuDialog = new CircleMenuDialog();
+                menuDialog.show(getFragmentManager(), "");
+            }
+        });
+
     }
 
     ///////////////////////////////////////////////////////////////////////////

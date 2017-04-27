@@ -93,6 +93,9 @@ public class CirclePresenterImpl implements ICirclePresenter, Handler.Callback {
                         }
                     }
                 } else {
+                    if (listener != null) {
+                        listener.refreshEnd();
+                    }
                     Toast.makeText(mContext, "网络获取版本号失败", Toast.LENGTH_SHORT).show();
                 }
             }
