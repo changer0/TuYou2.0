@@ -92,17 +92,20 @@
         <item name="android:layout_marginLeft">20dp</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Large</item>
     </style>
-    <style name="navigation_item_card_view">
+    <style name="navigation_item_liner">
         <item name="android:clickable">true</item>
         <item name="android:foreground">?attr/selectableItemBackground</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="cardCornerRadius">2dp</item>
-        <item name="cardElevation">2dp</item>
-        <item name="cardMaxElevation">5dp</item>
-        <item name="cardPreventCornerOverlap">true</item>
-        <item name="cardUseCompatPadding">true</item>
-        <item name="contentPadding">5dp</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <!--<item name="cardCornerRadius">2dp</item>-->
+        <!--<item name="cardElevation">2dp</item>-->
+        <!--<item name="cardMaxElevation">5dp</item>-->
+        <!--<item name="cardPreventCornerOverlap">true</item>-->
+        <!--<item name="cardUseCompatPadding">true</item>-->
+        <!--<item name="contentPadding">5dp</item>-->
     </style>
 
 

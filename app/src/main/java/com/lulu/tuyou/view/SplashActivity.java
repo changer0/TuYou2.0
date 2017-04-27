@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
@@ -37,8 +39,7 @@ import cn.leancloud.chatkit.LCChatKit;
 public class SplashActivity extends AppCompatActivity {
     private static String[] PERMISSIONS_TUYOU = {
             Manifest.permission.READ_PHONE_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.SYSTEM_ALERT_WINDOW,
-            Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.CHANGE_WIFI_STATE,
+            Manifest.permission.ACCESS_COARSE_LOCATION
 
     };
     public static final int REQUEST_PERMISSIONS_CODE = 100;
@@ -74,7 +75,10 @@ public class SplashActivity extends AppCompatActivity {
 
     }
 
-    //权限检查
+
+    /**
+     * 为方便起见，用户第一次安装的时候将所有需要的权限申请下来
+     */
     private void requestPermissionInList() {
         if (Build.VERSION.SDK_INT < 23) {
             //检查是否登录
@@ -90,7 +94,10 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * 请求权限列表
+     * @param permissions
+     */
     protected void requestTuYouPermissions(String[] permissions) {
         if (Build.VERSION.SDK_INT < 23) {
             return;
@@ -99,9 +106,19 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     // >=23 权限问题 by zhanglulu
+
+    /**
+     * 检查没有赋予权限的权限都有哪些
+     * @param context
+     * @param permissions
+     * @return
+     */
     public String[] checkPermissions(Context context, String[] permissions) {
-        List<String> needRequestPermissionList = new ArrayList<String>();
+        List<String> needRequestPermissionList = new ArrayList<>();
         for (String permission : permissions) {
+            //checkSelfPermission
+            //如果应用具有此权限，方法将返回 PackageManager.PERMISSION_GRANTED，并且应用可以继续操作。
+            // 如果应用不具有此权限，方法将返回 PERMISSION_DENIED，且应用必须明确向用户要求权限
             if (android.support.v4.app.ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
                 needRequestPermissionList.add(permission);
             }
@@ -129,15 +146,16 @@ public class SplashActivity extends AppCompatActivity {
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setIcon(R.mipmap.ic_app)
                 .setTitle("权限获取失败")
-                .setMessage("软件需要获取必要的权限以保证你正常使用QQ阅读")
+                .setMessage("软件需要获取必要的权限以保证你正常使用图友")
                 .setPositiveButton(
                         "授予权限",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog,
                                                 int which) {
-                                startActivity(new Intent(SplashActivity.this, null));
-                                finish();
+                                //再次请求权限
+                                requestPermissionInList();
+                                //finish();
                             }
                         }).setNegativeButton("退出应用", new DialogInterface.OnClickListener() {
                     @Override

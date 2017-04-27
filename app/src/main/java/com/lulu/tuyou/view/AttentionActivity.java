@@ -58,28 +58,7 @@ public class AttentionActivity
             @Override
             public void done(List<TuYouRelation> list, BmobException e) {
                 if (e == null) {
-                    int size = list.size();
-                    if (list != null && size > 0) {
-                        mAdapter.clearAll();
-
-                        for (int i = 0; i < size; i++) {
-                            TuYouRelation relation = list.get(i);
-                            final TuYouUser toUser = relation.getToUser();
-                            if (toUser != null) {
-                                BmobQuery<TuYouUser> userQuery = new BmobQuery<>();
-                                    final int indexI = i;
-                                    userQuery.getObject(toUser.getObjectId(), new QueryListener<TuYouUser>() {
-                                        @Override
-                                        public void done(TuYouUser user, BmobException e) {
-                                                mAdapter.add(user);
-                                                Log.d("lulu", "AttentionActivity-done  index:" + indexI);
-                                        }
-
-                                    });
-                            }
-                        }
-
-                    }
+                    addAttentionList(list);
                 } else {
                     Log.d("lulu", "AttentionActivity-done  出现问题：" + e.getMessage());
                     e.printStackTrace();
@@ -88,6 +67,30 @@ public class AttentionActivity
         });
 
 
+    }
+
+    private void addAttentionList(List<TuYouRelation> list) {
+        int size = list.size();
+        if (list != null && size > 0) {
+            mAdapter.clearAll();
+            for (int i = 0; i < size; i++) {
+                TuYouRelation relation = list.get(i);
+                final TuYouUser toUser = relation.getToUser();
+                if (toUser != null) {
+                    BmobQuery<TuYouUser> userQuery = new BmobQuery<>();
+                        final int indexI = i;
+                        userQuery.getObject(toUser.getObjectId(), new QueryListener<TuYouUser>() {
+                            @Override
+                            public void done(TuYouUser user, BmobException e) {
+                                    mAdapter.add(user);
+                                    Log.d("lulu", "AttentionActivity-done  index:" + indexI);
+                            }
+
+                        });
+                }
+            }
+
+        }
     }
 
     @Override

@@ -113,6 +113,16 @@ public class TuYouActivity extends AppCompatActivity implements View.OnClickList
                 Toast.makeText(this, "点击了", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(this, AttentionActivity.class);
                 startActivity(intent);
+                /**
+                 * overridePendingTransition方法需要在startAtivity方法或者是finish方法调用之后立即执行
+
+                 参数enterAnim表示的是从Activity a跳转到Activity b，进入b时的动画效果
+
+                 参数exitAnim表示的是从Activity a跳转到Activity b，离开a时的动过效果
+
+                 若进入b或者是离开a时不需要动画效果，则可以传值为0
+                 */
+                //overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_in_left);
                 break;
         }
     }
