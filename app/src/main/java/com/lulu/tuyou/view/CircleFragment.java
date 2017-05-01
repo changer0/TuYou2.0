@@ -2,6 +2,7 @@ package com.lulu.tuyou.view;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,17 +11,23 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.lulu.tuyou.R;
 import com.lulu.tuyou.databinding.FragmentCircleBinding;
 import com.lulu.tuyou.presenter.CirclePresenterImpl;
 import com.lulu.tuyou.presenter.ICirclePresenter;
 import com.lulu.tuyou.utils.RefreshListener;
+import com.lulu.tuyou.utils.Utils;
+
+import java.io.File;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class CircleFragment extends Fragment implements ICircleView, SwipeRefreshLayout.OnRefreshListener {
+    public static final int REQUREST_CODE_CAMERA = 100;
+    public static final int REQUREST_CODE_CROP = 101;
     private static CircleFragment instance;
     private ICirclePresenter mPresenter;
     private Context mContext;
@@ -64,7 +71,7 @@ public class CircleFragment extends Fragment implements ICircleView, SwipeRefres
         mBinding.commonTitle.commonTitleMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mMenuDialog = CircleMenuDialog.getInstance();
+                mMenuDialog = CircleMenuDialog.getInstance(CircleFragment.this);
                 mMenuDialog.show(getFragmentManager(), CIRCLE_MENU_DIALOG_TAG);
             }
         });
@@ -78,6 +85,7 @@ public class CircleFragment extends Fragment implements ICircleView, SwipeRefres
             mMenuDialog.dismiss();
         }
     }
+
 
     ///////////////////////////////////////////////////////////////////////////
     // 下拉刷新回调
@@ -98,5 +106,35 @@ public class CircleFragment extends Fragment implements ICircleView, SwipeRefres
                 }
             }
         });
+    }
+    private File mFile;
+    @Override
+    public void onClickMenu(View v) {
+        switch (v.getId()) {
+            case R.id.common_title_menu_camera:
+                //Toast.makeText(mContext, "相机", Toast.LENGTH_SHORT).show();
+                //跳转到相机进行拍照取图
+                mFile = Utils.jumpToCamera(this, REQUREST_CODE_CAMERA);
+                break;
+            case R.id.common_title_menu_photo_text:
+                Toast.makeText(mContext, "照片", Toast.LENGTH_SHORT).show();
+                break;
+        }
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);   //this
+        switch (requestCode) {
+            case REQUREST_CODE_CAMERA:
+                Utils.cropImage(this, mFile, REQUREST_CODE_CROP);
+                break;
+            case REQUREST_CODE_CROP:
+                Toast.makeText(mContext, "裁剪完成", Toast.LENGTH_SHORT).show();
+                break;
+        }
+
+
     }
 }

@@ -1,8 +1,14 @@
 package com.lulu.tuyou.view;
 
+import android.view.View;
+
 /**
  * Created by zhanglulu on 2017/3/3.
  */
 
 public interface ICircleView {
+    ///////////////////////////////////////////////////////////////////////////
+    // Menu点击回调
+    ///////////////////////////////////////////////////////////////////////////
+    void onClickMenu(View view);
 }

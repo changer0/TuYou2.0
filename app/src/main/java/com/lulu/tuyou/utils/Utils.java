@@ -5,6 +5,16 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -27,6 +37,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +51,72 @@ import cn.leancloud.chatkit.utils.LCIMConstants;
  */
 
 public class Utils {
+
+
+    public static void cropImage(Fragment fragment, File file, int requestCode) {
+        String fileName = "new_" +  file.getName();
+        Context context = fragment.getContext();
+        File newFile = new File(context.getCacheDir(), fileName);
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            //有外置存储
+            newFile = new File(context.getExternalCacheDir(), fileName);
+        }
+        //剪切完成后存放的位置
+        Uri outputUri = FileProvider.getUriForFile(context, "com.lulu.tuyou.view.CircleMenuDialog", newFile);
+        Uri imageUri = FileProvider.getUriForFile(context, "com.lulu.tuyou.view.CircleMenuDialog", file);
+//        Uri imageUri = Uri.fromFile(mFile);
+//        Uri outputUri = Uri.fromFile(newFile);
+
+        Intent intent = new Intent();
+        intent.setAction("com.android.camera.action.CROP");
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        intent.setDataAndType(imageUri, "image/*");
+        intent.putExtra("crop", "true");
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        intent.putExtra("scale", true);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, outputUri);
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+        intent.putExtra("noFaceDetection", true); // no face detection
+
+        //将存储图片的uri读写权限授权给剪裁工具应用
+        List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        for (ResolveInfo resolveInfo : resInfoList) {
+            String packageName = resolveInfo.activityInfo.packageName;
+            context.grantUriPermission(packageName, outputUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+        fragment.startActivityForResult(Intent.createChooser(intent, "选择剪裁工具"), requestCode);
+    }
+
+
+    public static File jumpToCamera(Fragment fragment, int requestCode) {
+        Context context = fragment.getContext();
+        String fileName = System.currentTimeMillis() + ".jpg";
+        File file = new File(context.getCacheDir(), fileName);
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            //有外置存储
+            file = new File(context.getExternalCacheDir(), fileName);
+        }
+
+        //通过FileProvider去取
+        Uri uri = FileProvider.getUriForFile(context, "com.lulu.tuyou.view.CircleMenuDialog", file);
+        Intent intent = new Intent();
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); //添加这一句表示对目标应用临时授权该Uri所代表的文件
+        intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);//拍照Action
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);//传入uri
+
+        //将存储图片的uri读写权限授权给相机应用
+        List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        for (ResolveInfo resolveInfo : resInfoList) {
+            String packageName = resolveInfo.activityInfo.packageName;
+            context.grantUriPermission(packageName, uri , Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+        fragment.startActivityForResult(intent, requestCode);
+        return file;
+    }
+
+
 
     /**
      * 跳转到聊天界面

@@ -110,7 +110,7 @@ public class TuYouActivity extends AppCompatActivity implements View.OnClickList
                 loginOut();
                 break;
             case R.id.item_navigation_attention:
-                Toast.makeText(this, "点击了", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "点击了", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(this, AttentionActivity.class);
                 startActivity(intent);
                 /**
@@ -217,4 +217,5 @@ public class TuYouActivity extends AppCompatActivity implements View.OnClickList
 //        }
 
     }
+
 }

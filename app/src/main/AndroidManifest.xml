@@ -63,6 +63,7 @@
         <activity
             android:name=".view.TuYouActivity"
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             android:theme="@style/TuYouActivityTheme">
 
             <!-- <intent-filter> -->
@@ -97,6 +98,16 @@
             </intent-filter>
         </receiver>
 
+        <!--适配Android 7.0获取Uri-->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.lulu.tuyou.view.CircleMenuDialog"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
     </application>
 

@@ -2,11 +2,20 @@ package com.lulu.tuyou.view;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.Binder;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,9 +25,11 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.lulu.tuyou.R;
-import com.lulu.tuyou.common.Constant;
 import com.lulu.tuyou.databinding.CircleMenuBinding;
 import com.lulu.tuyou.utils.Utils;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * Created by zhanglulu on 2017/4/27.
@@ -26,15 +37,23 @@ import com.lulu.tuyou.utils.Utils;
  */
 
 public class CircleMenuDialog extends AppCompatDialogFragment implements View.OnClickListener {
+
     private CircleMenuBinding mBinding;
     private Context mContext;
     private static CircleMenuDialog sDialog = null;
+//    private File mFile;
+    private ICircleView mICircleView;
 
-    public static CircleMenuDialog getInstance() {
+    public CircleMenuDialog(ICircleView ICircleView) {
+        super();
+        mICircleView = ICircleView;
+    }
+
+    public static CircleMenuDialog getInstance(ICircleView iCircleView) {
         if (sDialog == null) {
             synchronized (CircleMenuDialog.class) {
                 if (sDialog == null) {
-                    sDialog = new CircleMenuDialog();
+                    sDialog = new CircleMenuDialog(iCircleView);
                 }
             }
         }
@@ -73,13 +92,33 @@ public class CircleMenuDialog extends AppCompatDialogFragment implements View.On
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.common_title_menu_camera:
-                Toast.makeText(mContext, "相机", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.common_title_menu_photo_text:
-                Toast.makeText(mContext, "照片", Toast.LENGTH_SHORT).show();
-                break;
-        }
+        mICircleView.onClickMenu(v);
+//        switch (v.getId()) {
+//            case R.id.common_title_menu_camera:
+//                //Toast.makeText(mContext, "相机", Toast.LENGTH_SHORT).show();
+//                //跳转到相机进行拍照取图
+//                mFile = Utils.jumpToCamera(this, REQUREST_CODE_CAMERA);
+//                break;
+//            case R.id.common_title_menu_photo_text:
+//                Toast.makeText(mContext, "照片", Toast.LENGTH_SHORT).show();
+//                break;
+//        }
     }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);   //this
+//        switch (requestCode) {
+//            case REQUREST_CODE_CAMERA:
+//                Utils.cropImage(this, mFile, REQUREST_CODE_CROP);
+//                break;
+//            case REQUREST_CODE_CROP:
+//                Toast.makeText(mContext, "裁剪完成", Toast.LENGTH_SHORT).show();
+//                break;
+//        }
+
+
+    }
+
 }

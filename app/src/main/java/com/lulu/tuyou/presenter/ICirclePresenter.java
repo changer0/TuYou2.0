@@ -1,7 +1,5 @@
 package com.lulu.tuyou.presenter;
 
-import android.support.v7.widget.RecyclerView;
-
 import com.lulu.tuyou.databinding.FragmentCircleBinding;
 import com.lulu.tuyou.utils.RefreshListener;
 
