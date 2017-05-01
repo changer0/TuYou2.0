@@ -3,7 +3,7 @@
     <RelativeLayout
                     android:id="@+id/common_title" android:background="@color/colorPrimary"
                     android:orientation="vertical" android:layout_width="match_parent"
-                    android:layout_height="68dp">
+                    android:layout_height="@dimen/common_title_height">
         <TextView
             style="@style/common_title_location"
             android:text="图友圈"
@@ -14,7 +14,8 @@
             android:layout_height="wrap_content" />
 
         <ImageView
-
+            android:layout_marginRight="20dp"
+            android:visibility="gone"
             style="@style/common_title_location"
             android:layout_alignParentRight="true"
             android:id="@+id/common_title_menu"

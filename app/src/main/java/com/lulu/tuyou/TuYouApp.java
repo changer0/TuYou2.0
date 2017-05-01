@@ -7,6 +7,7 @@ import com.avos.avoscloud.AVOSCloud;
 import com.avos.avoscloud.PushService;
 import com.lulu.tuyou.common.Constant;
 import com.lulu.tuyou.model.CustomUserProvider;
+import com.lulu.tuyou.utils.Utils;
 import com.lulu.tuyou.view.SplashActivity;
 import com.lulu.tuyou.view.TuYouActivity;
 
@@ -38,6 +39,7 @@ public class TuYouApp extends Application {
         Constant.screenWidth = dm.widthPixels;
         Constant.screenHeight = dm.heightPixels;
         Constant.screenDensity = dm.density;
+        Constant.stateBarHeight = Utils.getStatusBarHeight(this);
         return 0;
     }
 }

@@ -124,6 +124,7 @@ public class MapFragment extends Fragment implements IMapView, View.OnClickListe
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
                         hideEmptyView();
+                        MapPresenterImpl.isDisplayNearby = false;
                         return false;
                 }
                 break;

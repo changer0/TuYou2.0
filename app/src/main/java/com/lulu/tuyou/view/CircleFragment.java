@@ -25,6 +25,8 @@ public class CircleFragment extends Fragment implements ICircleView, SwipeRefres
     private ICirclePresenter mPresenter;
     private Context mContext;
     private FragmentCircleBinding mBinding;
+    public static final String CIRCLE_MENU_DIALOG_TAG = "circle_menu_dialog";
+    private CircleMenuDialog mMenuDialog;
 
     public static CircleFragment newInstance() {
         if (instance == null) {
@@ -58,15 +60,23 @@ public class CircleFragment extends Fragment implements ICircleView, SwipeRefres
         mBinding.circleSwipeRefresh.setColorSchemeColors(mContext.getResources().getColor(R.color.colorApp2));
         mBinding.circleSwipeRefresh.setOnRefreshListener(this);
         mPresenter.bindData(mBinding);
-
+        mBinding.commonTitle.commonTitleMenu.setVisibility(View.VISIBLE);
         mBinding.commonTitle.commonTitleMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CircleMenuDialog menuDialog = new CircleMenuDialog();
-                menuDialog.show(getFragmentManager(), "");
+                mMenuDialog = CircleMenuDialog.getInstance();
+                mMenuDialog.show(getFragmentManager(), CIRCLE_MENU_DIALOG_TAG);
             }
         });
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mMenuDialog != null && mMenuDialog.isVisible()) {
+            mMenuDialog.dismiss();
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////

@@ -3,23 +3,25 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
     <LinearLayout
                   android:orientation="vertical"
-                  android:layout_width="match_parent"
+                  android:layout_width="195dp"
+                  android:background="@drawable/common_title_menu_bg"
+                  android:gravity="center_horizontal"
                   android:layout_height="match_parent">
 
         <TextView
+            android:id="@+id/common_title_menu_camera"
             android:text="拍照"
-            android:textSize="18sp"
-            android:paddingRight="10dp"
-            android:paddingLeft="10dp"
-            android:foreground="?attr/selectableItemBackground"
+            style="@style/common_title_menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+        <View
+            android:background="#D8D8D8"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
         <TextView
+            android:id="@+id/common_title_menu_photo_text"
             android:text="图片或文字"
-            android:textSize="18sp"
-            android:paddingRight="10dp"
-            android:paddingLeft="10dp"
-            android:foreground="?attr/selectableItemBackground"
+            style="@style/common_title_menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>

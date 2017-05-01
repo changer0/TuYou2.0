@@ -11,4 +11,5 @@
     <dimen name="img_width">50dp</dimen>
 
     <dimen name="register_card_left_width">80dp</dimen>
+    <dimen name="common_title_height">68dp</dimen>
 </resources>
