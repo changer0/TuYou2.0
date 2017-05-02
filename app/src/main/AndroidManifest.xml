@@ -62,8 +62,8 @@
         </activity>
         <activity
             android:name=".view.TuYouActivity"
-            android:screenOrientation="portrait"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/TuYouActivityTheme">
 
             <!-- <intent-filter> -->
@@ -73,7 +73,10 @@
             <!-- <category android:name="android.intent.category.LAUNCHER"/> -->
             <!-- </intent-filter> -->
         </activity>
-        <activity android:name=".view.AttentionActivity" android:screenOrientation="portrait" android:parentActivityName=".view.TuYouActivity">
+        <activity
+            android:name=".view.AttentionActivity"
+            android:parentActivityName=".view.TuYouActivity"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".view.SplashActivity"
@@ -98,17 +101,19 @@
             </intent-filter>
         </receiver>
 
-        <!--适配Android 7.0获取Uri-->
+        <!-- 适配Android 7.0获取Uri -->
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.lulu.tuyou.view.CircleMenuDialog"
-            android:grantUriPermissions="true"
-            android:exported="false">
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
+                android:resource="@xml/file_paths"/>
         </provider>
 
+        <activity android:name=".view.CircleImageActivity">
+        </activity>
     </application>
 
 </manifest>

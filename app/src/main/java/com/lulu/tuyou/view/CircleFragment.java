@@ -128,13 +128,17 @@ public class CircleFragment extends Fragment implements ICircleView, SwipeRefres
         super.onActivityResult(requestCode, resultCode, data);   //this
         switch (requestCode) {
             case REQUREST_CODE_CAMERA:
-                Utils.cropImage(this, mFile, REQUREST_CODE_CROP);
+                if (requestCode == -1) {
+                    Utils.cropImage(this, mFile, REQUREST_CODE_CROP);
+                } else {
+                    Toast.makeText(mContext, "取消拍照", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case REQUREST_CODE_CROP:
                 Toast.makeText(mContext, "裁剪完成", Toast.LENGTH_SHORT).show();
+
+
                 break;
         }
-
-
     }
 }
