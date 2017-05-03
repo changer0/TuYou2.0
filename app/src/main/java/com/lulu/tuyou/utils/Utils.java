@@ -3,10 +3,12 @@ package com.lulu.tuyou.utils;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -31,6 +33,7 @@ import com.avos.avoscloud.SendCallback;
 import com.lulu.tuyou.R;
 import com.lulu.tuyou.common.Constant;
 import com.lulu.tuyou.model.TuYouUser;
+import com.lulu.tuyou.view.CircleFragment;
 import com.lulu.tuyou.view.TuYouActivity;
 
 import org.json.JSONArray;
@@ -53,6 +56,12 @@ import cn.leancloud.chatkit.utils.LCIMConstants;
 public class Utils {
 
 
+    /**
+     * 裁剪图片
+     * @param fragment
+     * @param file
+     * @param requestCode
+     */
     public static void cropImage(Fragment fragment, File file, int requestCode) {
         String fileName = "new_" +  file.getName();
         Context context = fragment.getContext();
@@ -89,7 +98,12 @@ public class Utils {
         fragment.startActivityForResult(Intent.createChooser(intent, "选择剪裁工具"), requestCode);
     }
 
-
+    /**
+     * 跳转到相机拍照
+     * @param fragment
+     * @param requestCode
+     * @return
+     */
     public static File jumpToCamera(Fragment fragment, int requestCode) {
         Context context = fragment.getContext();
         String fileName = System.currentTimeMillis() + ".jpg";
@@ -114,6 +128,45 @@ public class Utils {
         }
         fragment.startActivityForResult(intent, requestCode);
         return file;
+    }
+
+    /**
+     * 跳转到相册
+     * @param fragment
+     * @param requestCode
+     */
+    public static void jumpToAlbum(Fragment fragment, int requestCode) {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        fragment.startActivityForResult(intent, requestCode);
+    }
+
+    /**
+     * 通过Uri获取文件的路径
+     */
+    public static String getFilePathFromUri(Context context, Uri uri) {
+        String path = "";
+        if (uri == null) {
+            return null;
+        }
+        String scheme = uri.getScheme();
+        if (scheme == null) {
+            path = uri.getPath();
+        } else if (ContentResolver.SCHEME_FILE.equals(scheme)) {
+            path = uri.getPath();
+        } else if (ContentResolver.SCHEME_CONTENT.equals(scheme)) {
+            Cursor cursor = context.getContentResolver().query(uri, new String[]{MediaStore.Images.ImageColumns.DATA}, null, null, null);
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+                    if (index > -1) {
+                        path = cursor.getString(index);
+                    }
+                }
+                cursor.close();
+            }
+        }
+        return path;
     }
 
 

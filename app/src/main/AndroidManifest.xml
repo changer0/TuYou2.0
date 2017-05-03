@@ -90,6 +90,9 @@
         <activity android:name=".view.RegisterActivity">
         </activity>
 
+        <activity android:name=".view.CircleImageActivity" android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        </activity>
+
         <receiver android:name=".receiver.HiReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
@@ -112,8 +115,7 @@
                 android:resource="@xml/file_paths"/>
         </provider>
 
-        <activity android:name=".view.CircleImageActivity">
-        </activity>
+
     </application>
 
 </manifest>

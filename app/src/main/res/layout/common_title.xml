@@ -4,9 +4,21 @@
                     android:id="@+id/common_title" android:background="@color/colorPrimary"
                     android:orientation="vertical" android:layout_width="match_parent"
                     android:layout_height="@dimen/common_title_height">
+
+        <ImageView
+            android:id="@+id/common_title_back"
+            style="@style/common_title_location"
+            android:src="@drawable/common_title_selector"
+            android:layout_width="22dp"
+            android:scaleType="centerInside"
+            android:visibility="gone"
+            android:clickable="true"
+            android:layout_height="22dp"/>
+
         <TextView
             style="@style/common_title_location"
             android:text="图友圈"
+            android:layout_toRightOf="@id/common_title_back"
             android:textColor="#ffffff"
             android:id="@+id/common_title_header"
             android:textSize="20sp"
@@ -22,6 +34,24 @@
             android:src="@android:drawable/ic_menu_sort_by_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+
+        <TextView
+            android:visibility="gone"
+            android:text="发送"
+            android:textColor="#fff"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/common_title_btn_selector"
+            android:layout_alignParentRight="true"
+            style="@style/common_title_location"
+            android:id="@+id/common_title_btn"
+            android:textSize="20sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
 
     </RelativeLayout>
 </layout>

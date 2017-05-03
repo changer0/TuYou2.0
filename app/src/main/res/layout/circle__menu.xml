@@ -10,7 +10,7 @@
 
         <TextView
             android:id="@+id/common_title_menu_camera"
-            android:text="拍照"
+            android:text="拍   照"
             style="@style/common_title_menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -20,7 +20,7 @@
             android:layout_height="1dp"/>
         <TextView
             android:id="@+id/common_title_menu_photo_text"
-            android:text="图片或文字"
+            android:text="相   册"
             style="@style/common_title_menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>

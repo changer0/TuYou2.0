@@ -4,10 +4,10 @@ package com.lulu.tuyou.view;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,8 +26,7 @@ import java.io.File;
  * A simple {@link Fragment} subclass.
  */
 public class CircleFragment extends Fragment implements ICircleView, SwipeRefreshLayout.OnRefreshListener {
-    public static final int REQUREST_CODE_CAMERA = 100;
-    public static final int REQUREST_CODE_CROP = 101;
+
     private static CircleFragment instance;
     private ICirclePresenter mPresenter;
     private Context mContext;
@@ -107,7 +106,12 @@ public class CircleFragment extends Fragment implements ICircleView, SwipeRefres
             }
         });
     }
+
+
     private File mFile;
+    public static final int REQUREST_CODE_CAMERA = 100;
+    public static final int REQUREST_CODE_CROP = 101;
+    public static final int REQUREST_CODE_ALBUM= 102;
     @Override
     public void onClickMenu(View v) {
         switch (v.getId()) {
@@ -117,28 +121,45 @@ public class CircleFragment extends Fragment implements ICircleView, SwipeRefres
                 mFile = Utils.jumpToCamera(this, REQUREST_CODE_CAMERA);
                 break;
             case R.id.common_title_menu_photo_text:
-                Toast.makeText(mContext, "照片", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(mContext, "照片", Toast.LENGTH_SHORT).show();
+                Utils.jumpToAlbum(this, REQUREST_CODE_ALBUM);
                 break;
         }
     }
 
+    public static String CIRCLE_FRAGMENT_IMAGE_PATH = "";
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);   //this
         switch (requestCode) {
             case REQUREST_CODE_CAMERA:
-                if (requestCode == -1) {
-                    Utils.cropImage(this, mFile, REQUREST_CODE_CROP);
+                if (resultCode == -1) {
+                   //拍照完成
+                    jumpToCircleImageActivity(mFile.getAbsolutePath());
                 } else {
                     Toast.makeText(mContext, "取消拍照", Toast.LENGTH_SHORT).show();
                 }
                 break;
-            case REQUREST_CODE_CROP:
-                Toast.makeText(mContext, "裁剪完成", Toast.LENGTH_SHORT).show();
-
-
+            case REQUREST_CODE_ALBUM:
+                if (resultCode == -1) {
+                    //选择完成
+                    if (data != null) {
+                        Uri uri = data.getData();
+                        String path = Utils.getFilePathFromUri(mContext, uri);
+                        jumpToCircleImageActivity(path);
+                    }
+                } else {
+                    Toast.makeText(mContext, "取消选择", Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
+    }
+
+    private void jumpToCircleImageActivity(String path) {
+        Intent intent = new Intent();
+        intent.putExtra(CIRCLE_FRAGMENT_IMAGE_PATH,path);
+        intent.setClass(mContext, CircleImageActivity.class);
+        startActivity(intent);
     }
 }

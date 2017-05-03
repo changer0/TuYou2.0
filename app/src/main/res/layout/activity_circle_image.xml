@@ -2,17 +2,24 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <include android:id="@+id/common_title" layout="@layout/common_title"/>
+
         <EditText
             android:id="@+id/circle_text"
             android:hint="说一下你的想法吧"
+            android:gravity="top"
+            android:background="@null"
             android:layout_width="match_parent"
             android:layout_height="100dp"/>
 
         <com.yzs.imageshowpickerview.ImageShowPickerView
+            android:layout_marginTop="20dp"
             android:padding="10dp"
             android:id="@+id/circle_image_show"
             app:is_show_del="true"
