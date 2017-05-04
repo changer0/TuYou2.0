@@ -18,6 +18,7 @@ import com.lulu.tuyou.common.Constant;
 import com.lulu.tuyou.databinding.ActivityCircleImageBinding;
 import com.lulu.tuyou.model.CircleImageShowBean;
 import com.lulu.tuyou.model.TuYouTrack;
+import com.lulu.tuyou.model.TuYouVersion;
 import com.lulu.tuyou.utils.CircleImageLoader;
 import com.lulu.tuyou.utils.Utils;
 import com.yzs.imageshowpickerview.ImageShowPickerBean;
@@ -98,13 +99,13 @@ public class CircleImageActivity extends AppCompatActivity {
         String textContent = mBinding.circleText.getText().toString();
         track.setText(textContent);
 
-        if (mImageList.size() <= 0) {
-            //说明只有文字没有图片
-            trackUpload(track);
-            return;
-        }
+//        if (mImageList.size() <= 0) {
+//            //说明只有文字没有图片
+//            trackUpload(track);
+//            return;
+//        }
 
-        String[] imagesUpload = new String[mImageList.size()];
+        final String[] imagesUpload = new String[mImageList.size()];
         for (int i = 0; i < mImageList.size(); i++) {
             CircleImageShowBean imageBean = mImageList.get(i);
             String imagePath = imageBean.getImageShowPickerUrl();
@@ -121,7 +122,7 @@ public class CircleImageActivity extends AppCompatActivity {
             public void onSuccess(List<BmobFile> files, List<String> urls) {
                 //1、files-上传完成后的BmobFile集合，是为了方便大家对其上传后的数据进行操作，例如你可以将该文件保存到表中
                 //2、urls-上传文件的完整url地址
-                if (urls.size() == files.size()) {//如果数量相等，则代表文件全部上传完成
+                if (urls.size() == imagesUpload.length) {//如果数量相等，则代表文件全部上传完成
                     //do something
                     Toast.makeText(CircleImageActivity.this, "上传成功", Toast.LENGTH_SHORT).show();
                     progressDialog.dismiss();
@@ -159,6 +160,8 @@ public class CircleImageActivity extends AppCompatActivity {
                 if (e != null) {
                     Toast.makeText(CircleImageActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     Log.d("lulu", "CircleImageActivity-done  e:" + e.getMessage() + e.getErrorCode());
+                } else {
+                    TuYouVersion.versionAdd();
                 }
             }
         });
