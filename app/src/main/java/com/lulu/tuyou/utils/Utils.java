@@ -142,6 +142,16 @@ public class Utils {
     }
 
     /**
+     * 跳转到相册
+     * @param activity
+     * @param requestCode
+     */
+    public static void jumpToAlbum(Activity activity, int requestCode) {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        activity.startActivityForResult(intent, requestCode);
+    }
+    /**
      * 通过Uri获取文件的路径
      */
     public static String getFilePathFromUri(Context context, Uri uri) {

@@ -127,7 +127,7 @@ public class CircleFragment extends Fragment implements ICircleView, SwipeRefres
         }
     }
 
-    public static String CIRCLE_FRAGMENT_IMAGE_PATH = "";
+    public static String CIRCLE_FRAGMENT_IMAGE_PATH = "path";
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
