@@ -33,4 +33,8 @@
     <string name="reg_text">注册</string>
     <string name="navigation_logout">退出登录</string>
     <string name="map_no_friends">附近暂无图友</string>
+
+    <!--tagid-->
+    <item name="circle_item_image_tag" type="id" />
+
 </resources>

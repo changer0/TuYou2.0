@@ -14,6 +14,7 @@ public final class TuYouDbContract {
         public static final String COLUMN_NAME_USER_ID= "userId";
         public static final String COLUMN_NAME_IMAGE_CONTAINS = "images";
         public static final String COLUMN_NAME_UPDATE_TIME = "updateTime";
+        public static final String COLUMN_NAME_TYPE = "type";
 //        public static final String COLUMN_NAME_VERSION = "version";
     }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +36,8 @@ public class CircleAdapter extends RecyclerView.Adapter implements View.OnClickL
     private Context mContext;
         private List<TuYouTrack> mList;
     public static final int TYPE_HEADER = 0x1;
-    public static final int TYPE_CONTENT = 0x2;
+    public static final int TYPE_CONTENT_TEXT = 0x2;
+    public static final int TYPE_CONTENT_IMAGE = 0x3;
 
     public CircleAdapter(Context mContext) {
         this.mContext = mContext;
@@ -48,12 +50,15 @@ public class CircleAdapter extends RecyclerView.Adapter implements View.OnClickL
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ViewDataBinding binding;
         switch (viewType) {
-            case TYPE_CONTENT:
+            case TYPE_CONTENT_TEXT:
                 binding = DataBindingUtil.inflate(LayoutInflater.from(mContext), R.layout.item_circle, parent, false);
-                return new ContentViewHolder(binding, this);
+                return new ContentViewHolder(binding, this, viewType);
             case TYPE_HEADER:
                 binding = DataBindingUtil.inflate(LayoutInflater.from(mContext), R.layout.circle_item_header, parent, false);
                 return new HeaderViewHolder(binding, this);
+            case TYPE_CONTENT_IMAGE:
+                binding = DataBindingUtil.inflate(LayoutInflater.from(mContext), R.layout.item_circle, parent, false);
+                return new ContentViewHolder(binding, this, viewType);
         }
         return null;
     }
@@ -75,7 +80,11 @@ public class CircleAdapter extends RecyclerView.Adapter implements View.OnClickL
         if (position == 0) {
             return TYPE_HEADER;
         } else {
-            return TYPE_CONTENT;
+            if (mList.get(position).getType() == TuYouTrack.TYPE_IMAGE) {
+                return TYPE_CONTENT_IMAGE;
+            } else {
+                return TYPE_CONTENT_TEXT;
+            }
         }
     }
 
@@ -168,17 +177,25 @@ public class CircleAdapter extends RecyclerView.Adapter implements View.OnClickL
 
     static class ContentViewHolder extends RecyclerView.ViewHolder {
         ItemCircleBinding mBinding;//一次大胆尝试
+        int mViewType;
 
-        public ContentViewHolder(ViewDataBinding binding, View.OnClickListener listener) {
+        public ContentViewHolder(ViewDataBinding binding, View.OnClickListener listener, int viewType) {
             super(binding.getRoot());
             mBinding = (ItemCircleBinding) binding;
             mBinding.itemCircleUsername.setOnClickListener(listener);
             mBinding.itemCircleIcon.setOnClickListener(listener);
+            mViewType = viewType;
         }
 
         public void bindData(TuYouTrack tuYouTrack) {
             if (tuYouTrack != null) {
-                mBinding.itemCircleText.setText(tuYouTrack.getText());
+                Context context = mBinding.getRoot().getContext();
+                String text = tuYouTrack.getText();
+                if (!TextUtils.isEmpty(text)) {
+                    mBinding.itemCircleText.setText(text);
+                } else {
+                    mBinding.itemCircleText.setVisibility(View.GONE);
+                }
                 mBinding.itemCircleTime.setText(tuYouTrack.getUpdatedAt());
                 TuYouUser tuYouTrackUser = tuYouTrack.getUser();
                 BmobQuery<TuYouUser> query = new BmobQuery<>();
@@ -195,6 +212,15 @@ public class CircleAdapter extends RecyclerView.Adapter implements View.OnClickL
                         }
                     }
                 });
+
+                if (mViewType == TYPE_CONTENT_IMAGE) {
+                    //有图片显示的时候
+                    mBinding.itemCircleGridView.setVisibility(View.VISIBLE);
+                    CircleImageAdapter adapter = new CircleImageAdapter(tuYouTrack.getImages(), context);
+                    mBinding.itemCircleGridView.setAdapter(adapter);
+                } else {
+                    mBinding.itemCircleGridView.setVisibility(View.GONE);
+                }
             }
         }
 

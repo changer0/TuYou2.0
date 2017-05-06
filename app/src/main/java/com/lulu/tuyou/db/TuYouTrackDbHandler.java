@@ -94,6 +94,7 @@ public class TuYouTrackDbHandler {
                     values.put(TuYouDbContract.TuYouTrack.COLUMN_NAME_TEXT, track.getText());
                     values.put(TuYouDbContract.TuYouTrack.COLUMN_NAME_UPDATE_TIME, track.getUpdatedAt());
                     values.put(TuYouDbContract.TuYouTrack.COLUMN_NAME_IMAGE_CONTAINS, Utils.getStringsJson(track.getImages()));
+                    values.put(TuYouDbContract.TuYouTrack.COLUMN_NAME_TYPE, track.getType());
                     db.update(TuYouDbContract.TuYouTrack.TABLE_NAME, values,
                             "_ID=?", new String[]{track.getObjectId().toString()}
                     );
@@ -131,6 +132,8 @@ public class TuYouTrackDbHandler {
                 track.setImages(Utils.genStringListFromJson(newImages));
                 String updateTime = cursor.getString(cursor.getColumnIndex(TuYouDbContract.TuYouTrack.COLUMN_NAME_UPDATE_TIME));
                 track.setUpdatedAt(updateTime);
+                String type = cursor.getString(cursor.getColumnIndex(TuYouDbContract.TuYouTrack.COLUMN_NAME_TYPE));
+                track.setType(Integer.parseInt(type));
                 tracks.add(track);
             }
             msg.arg1 = DbConstant.DB_DATA_RECEIVE_STATE_SUCCESS;
@@ -167,6 +170,7 @@ public class TuYouTrackDbHandler {
         values.put(TuYouDbContract.TuYouTrack.COLUMN_NAME_USER_ID, track.getUser().getObjectId());
         values.put(TuYouDbContract.TuYouTrack.COLUMN_NAME_TEXT, track.getText());
         values.put(TuYouDbContract.TuYouTrack.COLUMN_NAME_UPDATE_TIME, track.getUpdatedAt());
+        values.put(TuYouDbContract.TuYouTrack.COLUMN_NAME_TYPE, track.getType());
         values.put(TuYouDbContract.TuYouTrack.COLUMN_NAME_IMAGE_CONTAINS, Utils.getStringsJson(track.getImages()));
 //        values.put(TuYouDbContract.TuYouTrack.COLUMN_NAME_VERSION, track.getVersionId());
         db.insert(TuYouDbContract.TuYouTrack.TABLE_NAME, null, values);

@@ -1,6 +1,5 @@
 package com.lulu.tuyou.view;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -10,9 +9,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import com.lulu.tuyou.R;
 import com.lulu.tuyou.common.Constant;
 import com.lulu.tuyou.databinding.ActivityCircleImageBinding;
@@ -24,10 +21,8 @@ import com.lulu.tuyou.utils.Utils;
 import com.yzs.imageshowpickerview.ImageShowPickerBean;
 import com.yzs.imageshowpickerview.ImageShowPickerListener;
 import com.yzs.imageshowpickerview.ImageShowPickerView;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
@@ -99,11 +94,14 @@ public class CircleImageActivity extends AppCompatActivity {
         String textContent = mBinding.circleText.getText().toString();
         track.setText(textContent);
 
-//        if (mImageList.size() <= 0) {
-//            //说明只有文字没有图片
-//            trackUpload(track);
-//            return;
-//        }
+        if (mImageList.size() <= 0) {
+            //说明只有文字没有图片
+            track.setType(TuYouTrack.TYPE_TEXT);
+            trackUpload(track);
+            return;
+        }
+        //设置Type为Image
+        track.setType(TuYouTrack.TYPE_IMAGE);
 
         final String[] imagesUpload = new String[mImageList.size()];
         for (int i = 0; i < mImageList.size(); i++) {
@@ -162,6 +160,7 @@ public class CircleImageActivity extends AppCompatActivity {
                     Log.d("lulu", "CircleImageActivity-done  e:" + e.getMessage() + e.getErrorCode());
                 } else {
                     TuYouVersion.versionAdd();
+                    finish();
                 }
             }
         });

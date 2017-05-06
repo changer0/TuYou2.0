@@ -19,6 +19,7 @@ public class DbHelper extends SQLiteOpenHelper {
             TuYouDbContract.TuYouTrack.COLUMN_NAME_USER_ID + DATABASE_TYPE + "," +
             TuYouDbContract.TuYouTrack.COLUMN_NAME_TEXT + DATABASE_TYPE + "," +
             TuYouDbContract.TuYouTrack.COLUMN_NAME_UPDATE_TIME + DATABASE_TYPE + "," +
+            TuYouDbContract.TuYouTrack.COLUMN_NAME_TYPE + DATABASE_TYPE + "," +
             TuYouDbContract.TuYouTrack.COLUMN_NAME_IMAGE_CONTAINS + DATABASE_TYPE + ")";
 
     private static final String SQL_CREATE_VERSION = "CREATE TABLE " + TuYouDbContract.TuYouVersion.TABLE_NAME +
