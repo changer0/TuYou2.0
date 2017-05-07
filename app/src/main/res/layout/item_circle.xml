@@ -53,7 +53,7 @@
 
 
                 <!--图片显示-->
-                <GridView
+                <com.lulu.tuyou.view.MyGridView
                     android:layout_below="@id/item_circle_text"
                     android:id="@+id/item_circle_grid_view"
                     android:layout_width="match_parent"
