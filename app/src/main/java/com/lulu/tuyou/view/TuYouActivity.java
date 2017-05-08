@@ -83,6 +83,7 @@ public class TuYouActivity extends AppCompatActivity implements View.OnClickList
                 .transform(new GlideCircleTransform(this))
                 .into(header.headerImg);
         header.headerUserName.setText(mCurrentUser.getNickName());
+        header.navigationHeader.setOnClickListener(this);
         content.navigationLogout.setOnClickListener(this);
         content.itemNavigationAttention.setOnClickListener(this);
         content.itemNavigationAbout.setOnClickListener(this);
@@ -124,6 +125,12 @@ public class TuYouActivity extends AppCompatActivity implements View.OnClickList
                  */
                 //overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_in_left);
                 break;
+            case R.id.item_navigation_about:
+                startActivity(new Intent(this, MineAboutActivity.class));
+                break;
+            case R.id.navigation_header:
+                break;
+
         }
     }
 
@@ -202,6 +209,18 @@ public class TuYouActivity extends AppCompatActivity implements View.OnClickList
             mCircleFragment = CircleFragment.newInstance();
         }
         addOrShowFragment(mCircleFragment, mManager.beginTransaction());
+    }
+
+    private long prePressTime;
+    @Override
+    public void onBackPressed() {
+        long curTime = System.currentTimeMillis();
+        if (curTime - prePressTime < 500) {
+            super.onBackPressed();
+        } else {
+            Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
+            prePressTime = System.currentTimeMillis();
+        }
     }
 
     @Override

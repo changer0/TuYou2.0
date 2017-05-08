@@ -63,7 +63,8 @@ public class CirclePresenterImpl implements ICirclePresenter, Handler.Callback {
             refreshData(null);
         } else {
             getTrackDataFromNet(0);
-            //todo:SpManager.setInitCircleData(mContext);
+            //已经初始化过了不用再刷新了
+            SpManager.setInitCircleData(mContext);
         }
     }
 

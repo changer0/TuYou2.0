@@ -35,6 +35,6 @@
     <string name="map_no_friends">附近暂无图友</string>
 
     <!--tagid-->
-    <item name="circle_item_image_tag" type="id" />
+    <item name="circle_item_image_tag" type="id"/>
 
 </resources>
