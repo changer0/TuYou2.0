@@ -129,6 +129,7 @@ public class TuYouActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(new Intent(this, MineAboutActivity.class));
                 break;
             case R.id.navigation_header:
+                startActivity(new Intent(this, MineUserActivity.class));
                 break;
 
         }

@@ -117,7 +117,7 @@
                 android:resource="@xml/file_paths"/>
         </provider>
 
-        <activity android:name=".view.MineUserActivity">
+        <activity android:name=".view.MineUserActivity" android:theme="@style/TuYouActivityTheme">
         </activity>
     </application>
 

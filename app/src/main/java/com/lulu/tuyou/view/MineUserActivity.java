@@ -3,22 +3,23 @@ package com.lulu.tuyou.view;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lulu.tuyou.R;
+import com.lulu.tuyou.common.Constant;
 import com.lulu.tuyou.model.TuYouUser;
+import com.lulu.tuyou.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -41,7 +42,6 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
     private TextView mSetCity;
     private ImageView mSetIcon;
     private TextView mSetName;
-    private Toolbar toolBar;
     private TextView mSetNickName;
 
     @Override
@@ -49,6 +49,9 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mine_user);
         ((TextView) findViewById(R.id.common_title_header)).setText("我");
+        View backView = findViewById(R.id.common_title_back);
+        backView.setOnClickListener(this);
+        backView.setVisibility(View.VISIBLE);
         initView();//
 
     }
@@ -232,63 +235,57 @@ public class MineUserActivity extends AppCompatActivity implements View.OnClickL
 
             case R.id.user_cv_icon:
                 // TODO: 2016/11/8 跳转到修改头像
-//                startActivity(new Intent(this, SelectPhotoActivity.class));
-//                dialogIcon();
-                Intent intent = new Intent(MineUserActivity.this, SelectPhotoActivity.class);
-                startActivityForResult(intent, 0);
+                Utils.jumpToAlbum(this, REQUEST_CODE);
+                break;
+            case R.id.common_title_back:
+                finish();
                 break;
         }
     }
 
+    public static final int REQUEST_CODE = 0x1000;
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 0) {
-            if (data != null) {
-                String path = data.getStringExtra(SelectPhotoActivity.FROM_SOURCE);
-                if (!TextUtils.isEmpty(path)) {
-                    final BmobFile file = new BmobFile(new File(path));
-                    file.upload(new UploadFileListener() {
+        if (requestCode == REQUEST_CODE) {
+            if (resultCode == -1) {
+                Uri uri = data.getData();
+                String path = Utils.getFilePathFromUri(this, uri);
+                updateIcon(path);
+            } else {
+                Toast.makeText(this, "取消选择", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    /**
+     * 更新头像
+     * @param path
+     */
+    private void updateIcon(String path) {
+        final BmobFile bmobFile = new BmobFile(new File(path));
+        bmobFile.upload(new UploadFileListener() {
+            @Override
+            public void done(BmobException e) {
+                if (e == null) {
+                    String url = bmobFile.getFileUrl();
+                    Constant.currentUser.setIcon(url);
+                    Constant.currentUser.update(new UpdateListener() {
                         @Override
                         public void done(BmobException e) {
-                            if (e == null) {
-                                BmobUser bmobUser = BmobUser.getCurrentUser();
-                                BmobQuery<TuYouUser> query = new BmobQuery<>();
-                                query.getObject(bmobUser.getObjectId(), new QueryListener<TuYouUser>() {
-                                    @Override
-                                    public void done(TuYouUser user, BmobException e) {
-                                        if (e == null) {
-                                            user.setIcon(file.getFileUrl());
-                                            user.update(new UpdateListener() {
-                                                @Override
-                                                public void done(BmobException e) {
-                                                    if (e == null) {
-                                                        Picasso.with(MineUserActivity.this).load(file.getFileUrl()).config(Bitmap.Config.ARGB_8888)
-                                                                .transform(new CircleTransform()).into(mSetIcon);
-                                                        Snackbar.make(getWindow().getDecorView(), "上传成功", Snackbar.LENGTH_SHORT).show();
-                                                    } else {
-                                                        Snackbar.make(getWindow().getDecorView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
-                                                    }
-                                                }
-                                            });
-
-
-                                        } else {
-                                            Snackbar.make(getWindow().getDecorView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
-
+                            if (e != null) {
+                                Snackbar.make(getWindow().getDecorView(), "更新ICON失败", Snackbar.LENGTH_SHORT).show();
                             } else {
-                                Snackbar.make(getWindow().getDecorView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                                Snackbar.make(getWindow().getDecorView(), "修改成功", Snackbar.LENGTH_SHORT).show();
+                                onResume();
                             }
                         }
-
                     });
-//                    Snackbar.make(getWindow().getDecorView(), path, Snackbar.LENGTH_SHORT).show();
+                } else {
+                    Snackbar.make(getWindow().getDecorView(), "更新ICON失败", Snackbar.LENGTH_SHORT).show();
                 }
             }
-
-        }
+        });
     }
 }
