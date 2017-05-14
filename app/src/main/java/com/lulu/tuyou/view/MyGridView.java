@@ -6,7 +6,7 @@ import android.widget.GridView;
 
 /**
  * Created by lulu on 2017/5/7.
- *
+ *自定义GridView
  */
 
 public class MyGridView extends GridView {
