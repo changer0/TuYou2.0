@@ -42,6 +42,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:visibility="gone"
             android:id="@+id/navigation_setting"
             style="@style/navigation_item_liner">
 
